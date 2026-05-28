@@ -84,6 +84,25 @@ The Webflow Data API does not expose a "delete registered script" action. Removi
 - Seeblick adds GSAP + ScrollTrigger from cdnjs (~110 KB minified) and Pannellum from jsDelivr (~150 KB) on top of the Webflow base.
 - Five duplicates of "Logo cloudonpoint icon.png" in the asset library.
 
+### Follow-up — 2026-05-28 — Robust scrollbar-width handling on menu open (v4)
+
+Abdellah pushed back on the previous approach (MutationObserver + reading body.style.paddingRight) because the compensation was indirect, asynchronous, and could flicker. The new requirement: header / burger / × must keep exactly the same visual reference between menu-closed and menu-open states, on every browser and OS, regardless of scrollbar width.
+
+New approach in header embed v4:
+
+1. `<html> { scrollbar-gutter: stable; }` — permanent CSS reservation of the scrollbar gutter. Supported on Chrome 94+, Firefox 97+, Safari 16+ (≈2022). When the body switches to `overflow: hidden` on menu open, the gutter stays reserved, so the layout does not shift. Side effect: on pages shorter than the viewport, a small empty gutter is visible on the right; on a site like Cloudonpoint, almost every page is longer than the viewport.
+2. `:root { --sbw: 0px; }` — CSS custom property that defaults to zero. Single source of truth for the scrollbar compensation.
+3. `body.menu-lock { padding-right: var(--sbw) !important; }`
+4. `body.menu-lock .cp-header { right: var(--sbw) !important; ... }`
+5. JS `lockScroll(on)` computes `window.innerWidth - documentElement.clientWidth` synchronously and writes it to `--sbw` BEFORE adding the `menu-lock` class. On unlock, `--sbw` is cleared after a 700 ms delay so the close transition doesn't snap.
+
+Removed:
+- `watchHeaderForLock()` and its MutationObserver — no longer needed; `--sbw` drives both body and header simultaneously in a single frame.
+
+Net effect: zero possibility of flicker, no hardcoded pixel value, no by-eye guesswork, identical visual reference between closed and open menu on every browser that supports scrollbar-gutter (modern browsers) AND on older ones via the JS fallback.
+
+File saved at `/opt/cursor/artifacts/wf_fixes/01_header_embed_v4.html`.
+
 ### Follow-up — 2026-05-28 — Strict separation of header / hero / services embeds
 
 Abdellah requested strict ownership: code about the header lives only in the header embed, code about a section lives only in that section's embed. Re-read all three embeds on 2026-05-28 via MCP to confirm the actual current content, then produced a clean split.
