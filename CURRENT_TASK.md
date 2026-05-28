@@ -84,6 +84,16 @@ The Webflow Data API does not expose a "delete registered script" action. Removi
 - Seeblick adds GSAP + ScrollTrigger from cdnjs (~110 KB minified) and Pannellum from jsDelivr (~150 KB) on top of the Webflow base.
 - Five duplicates of "Logo cloudonpoint icon.png" in the asset library.
 
+### Follow-up — 2026-05-28 — Seeblick 360° section repaired (missing container restored)
+
+The Pannellum 360° viewer on the Seeblick "Immersive view" section was silently failing: the script kept polling for `.pp-pano-embed` which did not exist in the DOM. Confirmed by reading the published HTML — the head, the embed (script + config), the tabs and the note were there, but no element with the target class.
+
+Fix applied directly via MCP, no manual Designer change needed:
+- Style `pp-pano-embed` enriched (margin-top kept, plus position/width/aspect-ratio 16:9/overflow hidden/background #000/border-radius 12px) so the placeholder reserves its space before Pannellum loads.
+- New Div Block `pp-pano-embed` inserted as sibling immediately before `.pp-pano-tabs` inside `.pp-inner`. Display name "360° Pano Viewer". Element id `4655f7f1-7e0a-f8ae-65d0-5f0546048bcf`.
+
+Abdellah needs to re-publish; no script change required.
+
 ### Follow-up — 2026-05-28 — Header v5 (clean black overlay + staggered text reveal)
 
 Two refinements requested after Abdellah validated v4's scrollbar behaviour:

@@ -55,6 +55,33 @@ Use this file to document changes made to the project memory or to the Webflow w
 - Awaiting Abdellah's explicit go-ahead before calling `clear_site_scripts` and before re-publishing the site.
 - The real performance bottleneck on the live site is photographic PNG assets (2.5–3.5 MB each on Home and Seeblick), not the scripts.
 
+## 2026-05-28 — Seeblick 360° section: missing pp-pano-embed container restored
+
+### Changed
+
+The Pannellum init script on the Seeblick "Immersive view" section was looping forever because its target container `.pp-pano-embed` did not exist in the published DOM. The section had the head, the embed (script + config), the tabs and the note, but no element with the class the script queries.
+
+Restored via MCP, directly on the Seeblick page canvas:
+- Enriched the existing `pp-pano-embed` style (previously only `margin-top:16px`) with `position:relative; width:100%; aspect-ratio:16/9; overflow:hidden; background-color:#000000; border-radius:12px`. The page now reserves the 16:9 dark placeholder before Pannellum loads, eliminating any layout shift.
+- Inserted a new Div Block with class `pp-pano-embed` as a sibling, positioned just before `pp-pano-tabs` inside `.pp-inner`. Display name set to "360° Pano Viewer" so it shows up clearly in the Navigator. Webflow element id: `4655f7f1-7e0a-f8ae-65d0-5f0546048bcf`.
+
+Final section order verified via `element_tool > query_elements`:
+1. `.pp-grid-6-6.pp-head-mb` (eyebrow + h2 + lead)
+2. The HTML Embed (Pannellum script + window.__PANO config)
+3. `.pp-pano-embed` (new — the 16:9 viewer placeholder)
+4. `.pp-pano-tabs` (Living / Kitchen / Bedroom / Dressing / Bathroom)
+5. `.pp-pano-note`
+
+### Why
+
+Reading the published HTML showed `.pp-pano-embed` was completely missing while the script kept polling for it (`setTimeout(I, 500)` indefinitely), silently failing with nothing on screen between the title and the tabs.
+
+### Notes
+
+- No script change required — the existing init logic already does the right thing once it finds the container.
+- Abdellah needs to re-publish the site for the change to go live.
+- Pannellum is loaded from `cdn.jsdelivr.net/npm/pannellum@2.5.6`. If a CSP or network rule ever blocks jsDelivr, we'll need to self-host Pannellum in the Webflow asset library.
+
 ## 2026-05-28 — Split into three section-owned embeds (header / hero / services)
 
 ### Changed
