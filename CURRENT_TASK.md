@@ -84,6 +84,28 @@ The Webflow Data API does not expose a "delete registered script" action. Removi
 - Seeblick adds GSAP + ScrollTrigger from cdnjs (~110 KB minified) and Pannellum from jsDelivr (~150 KB) on top of the Webflow base.
 - Five duplicates of "Logo cloudonpoint icon.png" in the asset library.
 
+### Follow-up — 2026-05-28 — Header overlay refactor (post-publish bugs)
+
+Abdellah re-published the site after the cleanup and reported two regressions:
+
+1. The pointer-tracked white highlight on `.cp-hero_caption` ("PROJECT PRESENCE" card) and `.svc_caption` ("ACTIVE CAPABILITY" card) stopped following the cursor.
+2. On Seeblick (and any non-Home page), opening the burger menu after scrolling > 0 left the menu overlay visible but with the header (logo + close-X) scrolled off-screen. At scroll = 0 the menu opened correctly. On Home the issue was hidden because the page's hero embed accidentally still injected the fix.
+
+Root causes (confirmed by reading the live HTML at `https://test-website---sabir.webflow.io/Seeblick-Birrwil`):
+
+- The pointer-move handler that powered the white highlight lived in `glasscss2.js`. The header embed only carried the matching CSS, never the JS. When `glasscss2` was unapplied at site level, the highlight stopped following the mouse on every page.
+- `.cp-header` is not `position: fixed` in the published Webflow CSS. The rule `body.menu-lock .cp-header { position: fixed !important; top: 0; left: 0; right: 0; z-index: 600; }` used to be injected at runtime by `heroslider4.js`. When `heroslider4` was unapplied at site level, the rule survived only on the Home page (because Home's hero embed still carries the same code). Every other page lost it.
+
+Fix: a single refactored header embed that owns the entire header / menu / glass behaviour. Saved at `/opt/cursor/artifacts/wf_fixes/header_embed_v2.html` (~20 KB). Abdellah pastes it into the existing Global Header embed (`4a9e9a90-2e99-fd97-a7d5-49cee5771f42`), replacing the previous content, then re-publishes. Embeds in other pages and components are not touched.
+
+What the new embed does:
+
+- `body.menu-lock .cp-header { position: fixed !important; ... }` is now a permanent rule in the `<style>` block, so it applies on every page from first paint.
+- A `MutationObserver` on `<body>` keeps the header right-aligned with the locked body (same logic that used to live in `heroslider4`).
+- A `pointermove` / `pointerleave` handler sets the `--gx` / `--gy` custom properties on `.cp-hero_caption` and `.svc_caption`, restoring the radial white highlight that follows the cursor.
+- All previous behaviour (menu open/close, theme toggle, lang toggle, on-dark luminance detection, WebGL displacement glass filter) is preserved and re-organized into clearly labelled sections.
+- Idempotent boot guarded by `window.__COP_HEADER_BOOTED__`.
+
 ### Work done — 2026-05-27 cleanup
 
 - Approved by Abdellah: remove every script applied to the site and remove the 60 orphan registered scripts.

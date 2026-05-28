@@ -55,6 +55,36 @@ Use this file to document changes made to the project memory or to the Webflow w
 - Awaiting Abdellah's explicit go-ahead before calling `clear_site_scripts` and before re-publishing the site.
 - The real performance bottleneck on the live site is photographic PNG assets (2.5–3.5 MB each on Home and Seeblick), not the scripts.
 
+## 2026-05-28 — Refactored Global Header embed (fix for two post-publish bugs)
+
+### Changed
+
+- Produced a single, self-contained replacement for the Global Header embed at `/opt/cursor/artifacts/wf_fixes/header_embed_v2.html` (~20 KB). Abdellah pastes this content into the existing header embed `4a9e9a90-2e99-fd97-a7d5-49cee5771f42`, replacing what is there now, then re-publishes.
+- No live Webflow change yet from this session — embed content can only be edited through the Designer.
+
+### Why
+
+After the 2026-05-27 cleanup + Abdellah's republish, two issues appeared:
+- The cursor-tracked white highlight on `.cp-hero_caption` and `.svc_caption` stopped following the pointer.
+- On Seeblick (and every non-Home page), opening the burger menu after scrolling left the menu overlay visible but the header (logo + close × control) scrolled off-screen. The Home page hid the bug because its hero embed still injects the missing rule.
+
+### Root causes (confirmed by reading published HTML)
+
+- The `pointermove` handler lived in `glasscss2.js`; the header embed only carried the matching CSS, never the JS. Removing `glasscss2` at site level removed the handler everywhere.
+- `.cp-header` is not naturally `position: fixed` in the Webflow CSS. The rule `body.menu-lock .cp-header { position: fixed !important; top: 0; left: 0; right: 0; z-index: 600; }` used to be injected at runtime by `heroslider4.js`. After cleanup, only Home still carries that rule (through the Home hero embed).
+
+### What the refactored embed adds
+
+- Permanent CSS rule `body.menu-lock .cp-header { position: fixed !important; ... }` so the header stays pinned on every page when the menu opens.
+- `MutationObserver` on `<body>` to keep the header aligned with the locked body width (replaces the `heroslider4` observer at the global header level).
+- `pointermove` + `pointerleave` handlers that set `--gx` / `--gy` on `.cp-hero_caption` and `.svc_caption`, restoring the cursor-tracked highlight.
+- All previous logic (menu open/close, theme toggle, lang toggle, on-dark detection, WebGL liquid-glass filter) preserved and reorganized into clearly labelled sections, with `window.__COP_HEADER_BOOTED__` guard so the script is idempotent.
+
+### Notes
+
+- Embed contents cannot be edited via the Webflow Data API; the change must be pasted into the Designer.
+- After paste, Abdellah must re-publish for the change to be live.
+
 ## 2026-05-27 — Cleared all site-level script applications
 
 ### Changed
