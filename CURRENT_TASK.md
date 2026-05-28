@@ -1,5 +1,50 @@
 # Current Task
 
+## Task: Contact page — bring to parity with Figma design
+
+### Source of truth
+
+Figma file `K9dYMDIHuuyRJAFFUXPtL2`, node `74:1662` (`Main Content` of Contact).
+Webflow page id `6a09d8751e5baf5ab32394aa` on site `6a08929c8a27708945c53a0d`.
+
+### Phase 1 — DONE 2026-05-28
+
+- All placeholder div text on the page now matches the Figma exactly (intro, form labels/options/hints, stats, sidebar).
+- Sidebar restructured from 3 to 4 blocks (Studio / Direct / Reassurance / Response) — see CHANGELOG.
+
+### Phase 2 — Pending: functional form rebuild
+
+Abdellah decided (2026-05-28) to rebuild the form as a native Webflow form (not an external embed). The current visual fields are pure decorative divs — the only real form on the page is a leftover default `FormForm` (`7ee09f21-7f0d-ad73-52cb-2a7f6bfa6def`, "Email Form 3") with just Name + Email + Submit.
+
+The structural work needed (each item is a Webflow MCP operation, all on Contact page):
+
+1. Wrap the visual form container (parent of the cc-form_step-* divs) in a real `FormForm`, or extend the existing `Email Form 3` form to contain the visual structure. Native submissions then arrive in Project Settings → Forms.
+2. For each "About you" field (Full name *, Company, Email *, Phone) replace the inline placeholder div with a real `FormTextInput`, set `inputName`, `inputType` (text / email / tel), `isRequired` where the label has `*`, and `placeholder` from the Figma:
+   - Full name *   → placeholder `Your full name`, required
+   - Company       → placeholder `Optional`
+   - Email *       → type email, placeholder `anna@cloudonpoint.ch`, required
+   - Phone         → type tel, placeholder `+41 …`
+3. Section 02:
+   - `Project location *` → `FormTextInput`, placeholder `City, canton or region`, required.
+   - `Residence type` → `FormSelect` with placeholder `Select an option` and six options:
+     `Single-family home`, `Multi-family residential`, `Apartment building / condominiums`, `Terraced / townhouses`, `Mixed-use development`, `Senior / assisted living`.
+   - `Project phase *` → group of four `FormRadioInput` (single-select), name `project-phase`, values `early-planning`, `permit-phase`, `pre-sales-preparation`, `commercialisation-started`.
+   - `Services needed` → group of four `FormCheckboxInput`, names `services-archviz`, `services-website`, `services-comms`, `services-unknown`.
+4. Section 03:
+   - `Message *` → `FormTextarea`, placeholder `e.g. 18-unit lakeside development in Zug, permit expected Q3, looking to begin pre-sales communication early next year.`, required.
+   - `Portfolio & references` → `FormFileUploadWrapper` (Webflow's file upload requires a paid plan — confirm with Abdellah before relying on it).
+5. Submit: convert the `cc-form_submit` link (`10ad7e40`) into a real `FormButton`, label `Send brief →`.
+6. Remove the leftover default Name/Email/Submit nodes so they are not duplicated.
+
+### Known MCP gotchas (recorded during Phase 1)
+
+- `get_all_elements` and large `query_elements` batches reliably time out on this page. Use targeted queries with `element_id` or single-style filters.
+- `set_text` must target the inner `String` node, not the parent block. The String id is the parent id with the last hex character +1.
+- `whtml_builder` accepts only a single root element per action — chain multiple actions for multi-block inserts.
+- The Webflow Data API cannot edit primary-locale text; primary edits must go through the Designer MCP.
+
+### Previous task (kept for reference)
+
 ## Task: Full audit of scripts, embeds and custom code on test-website---sabir
 
 ### Request

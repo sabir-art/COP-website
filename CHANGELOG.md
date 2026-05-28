@@ -20,6 +20,32 @@ Use this file to document changes made to the project memory or to the Webflow w
 - [Anything important]
 ```
 
+## 2026-05-28 — Contact page Phase 1 (text + sidebar restructure)
+
+### Changed (via Webflow MCP, live on test-website---sabir)
+
+- Replaced every placeholder text node on the Contact page (`6a09d8751e5baf5ab32394aa`) with the exact content from the Figma design (file `K9dYMDIHuuyRJAFFUXPtL2`, node `74:1662`).
+- Intro eyebrow row: `—` / `Contact — Cloudonpoint` / `Making it clear, credible & sellable.` (H1 + description were already correct from a previous pass).
+- Form visual section (still decorative divs, not real inputs yet): section 01 `About you` + `Takes ~3 minutes` + helper text + four labels (Full name *, Company, Email *, Phone); section 02 `Your project` + Project location *, Residence type, Project phase * + 4 phase options + hint, Services needed + 4 service options + hint; section 03 `Tell us more` + Message * + hint, Portfolio upload control text + Browse + hint, legal line. Submit `Send brief →` was already correct.
+- Bottom stats: four blocks filled — `01 Working hours / Mon — Fri / 09:00 — 18:00 CET`, `02 Languages / English / Deutsch · Français`, `03 Typical engagement / 12 — 24 month / Commercialisation cycle`, `04 Not the right fit / Single-asset listings / One-off renderings`.
+- Sidebar restructured from 3 blocks → 4 blocks to match the Figma:
+  - Moved the email link out of block 1 into block 2 (`element_tool > move_element`).
+  - Appended two `cc-sidebar_detail` rows to block 1 (`Zug — Switzerland`, `Working across CH · DE · AT`) via `whtml_builder`.
+  - Inserted a brand new block 4 (`cc-sidebar_block` with `cc-sidebar_num-row` + `cc-sidebar_detail` paragraph) as a sibling after block 3 via `whtml_builder`.
+  - Filled the sidebar text: `01 Studio / Cloudonpoint / Zug — Switzerland / Working across CH · DE · AT`, `02 Direct / hello@cloudonpoint.ch / +41 41 000 00 00`, `03 Reassurance / paragraph`, `04 Response / paragraph`.
+
+### Verified
+
+- All `set_text` calls returned `success` with the new `textContent` echoed back.
+- WHTML inserts returned the new element IDs and confirmed the `cc-sidebar_*` style classes were applied.
+
+### Notes
+
+- Inner text was set on the `String` child node, NOT on the parent block. Pattern confirmed: the String child id is the parent block id with the last hex character incremented by one (e.g., parent `…bfbc` → child `…bfbd`).
+- The MCP server timed out repeatedly on heavy batches (>5 operations) and on `get_all_elements`. Workarounds used: batches of 4–5 `set_text` per call; one `whtml_builder` action per call.
+- The Contact page still needs the functional form rebuild — see CURRENT_TASK for the scope.
+- Abdellah needs to re-publish the site for the changes to appear on the live URL.
+
 ## 2026-05-27 — Repository memory setup
 
 ### Changed
