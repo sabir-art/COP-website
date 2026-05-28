@@ -84,6 +84,16 @@ The Webflow Data API does not expose a "delete registered script" action. Removi
 - Seeblick adds GSAP + ScrollTrigger from cdnjs (~110 KB minified) and Pannellum from jsDelivr (~150 KB) on top of the Webflow base.
 - Five duplicates of "Logo cloudonpoint icon.png" in the asset library.
 
+### Follow-up — 2026-05-28 — Header v5 (clean black overlay + staggered text reveal)
+
+Two refinements requested after Abdellah validated v4's scrollbar behaviour:
+
+1. When the menu is open, the header still emitted its `box-shadow` (`inset 0 1px 0 rgba(255,255,255,.6)` at the top and `0 8px 30px rgba(0,0,0,.08)` below). Against the solid dark overlay these created a subtle horizontal separation line, visible as a "white strip" at the top of the viewport. Fix: zero out the header's `box-shadow`, `border`, `backdrop-filter`, `filter` and add an explicit `outline: none` when `body.menu-lock` is active, so the header is fully invisible and the overlay reads as one continuous black surface.
+
+2. Add a staggered reveal animation on the in-overlay text elements when the menu opens. Each block (nav links, tagline, meta rows) fades in from `opacity:0; translateY(24px); blur(6px)` to `opacity:1; translateY(0); blur(0)` using a `cubic-bezier(.22,1,.36,1)` over 0.55s, with delays cascading from ~0.18s. Respects `prefers-reduced-motion: reduce` (snap to final state, no transition).
+
+File saved at `/opt/cursor/artifacts/wf_fixes/01_header_embed_v5.html`.
+
 ### Follow-up — 2026-05-28 — Robust scrollbar-width handling on menu open (v4)
 
 Abdellah pushed back on the previous approach (MutationObserver + reading body.style.paddingRight) because the compensation was indirect, asynchronous, and could flicker. The new requirement: header / burger / × must keep exactly the same visual reference between menu-closed and menu-open states, on every browser and OS, regardless of scrollbar width.
