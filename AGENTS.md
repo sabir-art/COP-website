@@ -53,6 +53,19 @@ When working on Webflow:
 4. Test the change on the relevant pages.
 5. Document the result.
 
+### HtmlEmbed editing workflow (mandatory)
+
+Before proposing any change to a Webflow Embed element, the agent MUST:
+
+1. Read the current embed content via the Webflow Data API (`get_component_content` or `get_page_content`) and show it to Abdellah, or summarize it precisely with line references.
+2. Explain what will change and why.
+3. Provide the full new embed content as a single, ready-to-paste block.
+4. Tell Abdellah to paste it into the embed in the Webflow Designer, then re-publish.
+
+The agent MUST NOT skip step 1. The agent MUST NOT ask Abdellah to paste new code without first confirming what is currently there.
+
+Reason: the MCP cannot write the HTML/CSS/JS content of an existing embed (confirmed 2026-05-28). The only settable keys on an `HtmlEmbed` element are `domId` and `visibility`. The paste step is therefore always a human action.
+
 ## Cursor Cloud specific instructions
 
 This repository is used mainly as project memory for a Webflow website.

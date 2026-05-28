@@ -40,3 +40,20 @@ Do not transform questions into confirmed facts unless Abdellah validates them o
 ### API limitation recorded on 2026-05-27
 
 - The Webflow Data API has no "delete registered script" endpoint. Confirmed in the official Webflow Developer Documentation: the `DELETE /v2/sites/{site_id}/custom_code` description says "This endpoint will not remove scripts from the site's registered scripts." This is a platform limitation, not an MCP limitation.
+
+### API limitation recorded on 2026-05-28 — HtmlEmbed content is not writable
+
+Tested live with the Designer connected to MCP on the Global Header component (`7214b4c4-a3c9-af66-6bba-a6e063092594`) and its embed (`4a9e9a90-2e99-fd97-a7d5-49cee5771f42`):
+
+- The HtmlEmbed element exposes only TWO settable keys via `element_tool > set_settings`: `domId` and `visibility`. There is no `html`, `code`, `innerHTML` or equivalent key.
+- `whtml_builder` rejects multi-root HTML (and any `<style>` + `<script>` pair is multi-root).
+- `element_builder` with `type: HtmlEmbed` does not accept any inline HTML content field.
+
+Practical workflow for embed edits, confirmed by this test:
+
+1. Agent reads embed content via `data_localization_tool > get_component_content` (or `get_page_content`).
+2. Agent shows current content + proposed new content to Abdellah.
+3. Abdellah pastes the new content into the embed inside the Webflow Designer.
+4. Abdellah re-publishes.
+
+The "read embed content" step is always free (Data API). The "write embed content" step always requires manual paste in the Designer.
