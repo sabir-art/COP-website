@@ -55,6 +55,29 @@ Use this file to document changes made to the project memory or to the Webflow w
 - Awaiting Abdellah's explicit go-ahead before calling `clear_site_scripts` and before re-publishing the site.
 - The real performance bottleneck on the live site is photographic PNG assets (2.5–3.5 MB each on Home and Seeblick), not the scripts.
 
+## 2026-05-28 — Split into three section-owned embeds (header / hero / services)
+
+### Changed
+
+Abdellah requested strict ownership: header code in the header embed, section code in each section embed. Re-read all three embeds on 2026-05-28 via MCP to confirm exact current content, then produced three replacement embeds with no cross-section bleed.
+
+Three replacement embeds saved under `/opt/cursor/artifacts/wf_fixes/`:
+- `01_header_embed_v3.html` (~16.8 KB) → paste into the Global Header embed `4a9e9a90-2e99-fd97-a7d5-49cee5771f42`. Header-only: menu overlay, toggles, on-dark, WebGL liquid-glass on `.cp-header`, body scroll lock, `body.menu-lock .cp-header { position:fixed ... }`, header right-padding sync. No reference to `.cp-hero_caption` or `.svc_caption`.
+- `02_hero_embed_v2.html` (~9.3 KB) → paste into the Home hero embed `671fcc83-1902-78a4-c05e-c7e57d0c13ca`. Hero-only: hero zoom/slide animations, hero slider rotation, glass styling + cursor-tracked halo + WebGL displacement on `.cp-hero_caption`. No reference to header or `.svc_caption`.
+- `03_services_embed_v2.html` (~7.7 KB) → paste into the Home services embed `a96d8deb-ece3-ad5e-146f-ec7b7634dcb7`. Services-only: `.svc_item` active/expand, preview image swap, glass + cursor halo + WebGL on `.svc_caption`. No reference to header or `.cp-hero_caption`.
+
+The earlier combined `header_embed_v2.html` is superseded; this three-file split replaces it.
+
+### Why
+
+The earlier combined embed put `.cp-hero_caption` and `.svc_caption` styling inside the header embed, which mixed concerns. Abdellah wanted strict separation so each section embed is self-contained for its own visuals and interactions.
+
+### Notes
+
+- Boot guards are now scoped per embed: `window.__COP_HEADER_BOOTED__`, `window.__COP_HERO_BOOTED__`, `window.__COP_SVC_BOOTED__`.
+- The shared `<svg id="lgsvg">` root is created on demand by whichever embed needs it first; each filter has a unique id (`lgH`, `lgHC`, `lgSC`) so they coexist safely.
+- Recommended paste order: header first, then hero, then services, then a single re-publish.
+
 ## 2026-05-28 — Refactored Global Header embed (fix for two post-publish bugs)
 
 ### Changed

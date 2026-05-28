@@ -84,6 +84,27 @@ The Webflow Data API does not expose a "delete registered script" action. Removi
 - Seeblick adds GSAP + ScrollTrigger from cdnjs (~110 KB minified) and Pannellum from jsDelivr (~150 KB) on top of the Webflow base.
 - Five duplicates of "Logo cloudonpoint icon.png" in the asset library.
 
+### Follow-up — 2026-05-28 — Strict separation of header / hero / services embeds
+
+Abdellah requested strict ownership: code about the header lives only in the header embed, code about a section lives only in that section's embed. Re-read all three embeds on 2026-05-28 via MCP to confirm the actual current content, then produced a clean split.
+
+Ownership matrix the new embeds enforce:
+
+| Embed | Owns | Does NOT touch |
+|---|---|---|
+| Header `4a9e9a90` (Global Header component) | header base + transitions, menu overlay, body lock + header right-padding sync, `body.menu-lock .cp-header { position:fixed }`, header on-dark detection, WebGL liquid-glass on `.cp-header` only, theme/lang/burger toggles | anything about `.cp-hero_caption` or `.svc_caption` |
+| Hero `671fcc83` (Home page) | hero zoom/slide animations, hero slider rotation, glass + cursor halo + WebGL on `.cp-hero_caption` | anything about header, `.svc_caption`, or other sections |
+| Services `a96d8deb` (Home page) | svc_item active/expand, svc_preview image swap, glass + cursor halo + WebGL on `.svc_caption` | anything about header, `.cp-hero_caption`, or other sections |
+
+Files to paste, in /opt/cursor/artifacts/wf_fixes/:
+- 01_header_embed_v3.html  (~16.8 KB) → into embed 4a9e9a90 inside the Global Header component
+- 02_hero_embed_v2.html    (~9.3 KB)  → into embed 671fcc83 on the Home page hero
+- 03_services_embed_v2.html (~7.7 KB) → into embed a96d8deb on the Home page services section
+
+Recommended paste order: header first, then hero, then services, then a single re-publish.
+
+The previous combined `header_embed_v2.html` is now superseded but kept as a reference.
+
 ### Follow-up — 2026-05-28 — Header overlay refactor (post-publish bugs)
 
 Abdellah re-published the site after the cleanup and reported two regressions:
