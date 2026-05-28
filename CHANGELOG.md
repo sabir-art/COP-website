@@ -54,3 +54,23 @@ Use this file to document changes made to the project memory or to the Webflow w
 
 - Awaiting Abdellah's explicit go-ahead before calling `clear_site_scripts` and before re-publishing the site.
 - The real performance bottleneck on the live site is photographic PNG assets (2.5–3.5 MB each on Home and Seeblick), not the scripts.
+
+## 2026-05-27 — Cleared all site-level script applications
+
+### Changed
+
+- Webflow MCP `data_scripts_tool > clear_site_scripts` called on site `6a08929c8a27708945c53a0d`. API response: "All scripts removed from the site." This removed the 15 previously applied site-level scripts (heroslider4, projhovercss2, projcarousel4, enhancecss2, enhancejs3, contactfx4, footerfx2, glasscss2, glassjs6, togglecss, togglejs2, menucss2, menujs3, uifxcss2, uifxjs).
+- The embeds inside Home, Seeblick, the Global Header component and the Footer Animated component were intentionally NOT touched.
+- Memory files updated to reflect the new state.
+
+### Verified through Webflow MCP
+
+- `get_site_scripts` → 404 "Custom code block not found" (= zero applied site scripts)
+- `get_page_scripts` for Home `6a0892a08a27708945c53a25`, Seeblick `6a110292a4b44b5af561fa98`, Contact `6a09d8751e5baf5ab32394aa` → 404 "Custom code block not found" (= zero applied page scripts everywhere)
+- `get_registered_scripts` → still 60 entries (the API does not expose a delete action for registered scripts; confirmed in Webflow Developer Docs)
+
+### Notes
+
+- The change is in Webflow's data layer. The currently published HTML still references the old scripts. Abdellah needs to re-publish the site for the change to be live.
+- The 60 registry entries cannot be removed via API. Cleanest path: uninstall the MCP Bridge App in Webflow Workspace settings, which removes every script it had registered. They are dormant in the meantime and have no runtime cost.
+- Rollback snapshot stored at `/opt/cursor/artifacts/wf_audit_scripts/_BACKUP_state_before_cleanup.json` plus the 15 raw script files. Each application can be re-added one by one with `data_scripts_tool > add_site_script` if a regression appears after publish.

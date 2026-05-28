@@ -32,8 +32,11 @@ Do not transform questions into confirmed facts unless Abdellah validates them o
 
 ### New questions to confirm with Abdellah
 
-- 2026-05-27 — Approval to call `clear_site_scripts` on site `6a08929c8a27708945c53a0d` and remove all 15 applied site scripts in one shot? Each is fully duplicated by an embed; removal is reversible via `add_site_script`.
-- 2026-05-27 — After clearing, should the site be re-published immediately, or only after manual visual check in the Designer?
+- 2026-05-27 — When does Abdellah want to re-publish the site so the cleared site-level scripts stop being included in the live HTML? (Currently published HTML still references them; the Webflow data layer no longer references them.)
+- 2026-05-27 — Does Abdellah want to uninstall the MCP Bridge App in Webflow Workspace settings to also wipe the 60 registry entries? Uninstalling is the only way to empty the registry; the entries are inert right now (cosmetic only).
 - 2026-05-27 — Should the Contact page placeholder content ("This is some text inside of a div block.") be treated in the same workstream, or is it a separate task?
-- 2026-05-27 — Is it OK to flag the 45 orphan registered scripts (older versions, never applied) so Abdellah removes them from the Webflow Apps UI of the MCP Bridge app? The Data API has no programmatic way to delete them.
 - 2026-05-27 — Are the Site Settings → Custom Code "Head Code" and "Footer Code" boxes empty? The Data API only returns app-registered scripts. The two manual boxes are not exposed by MCP and need a visual check.
+
+### API limitation recorded on 2026-05-27
+
+- The Webflow Data API has no "delete registered script" endpoint. Confirmed in the official Webflow Developer Documentation: the `DELETE /v2/sites/{site_id}/custom_code` description says "This endpoint will not remove scripts from the site's registered scripts." This is a platform limitation, not an MCP limitation.

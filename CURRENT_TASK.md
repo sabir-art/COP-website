@@ -84,23 +84,39 @@ The Webflow Data API does not expose a "delete registered script" action. Removi
 - Seeblick adds GSAP + ScrollTrigger from cdnjs (~110 KB minified) and Pannellum from jsDelivr (~150 KB) on top of the Webflow base.
 - Five duplicates of "Logo cloudonpoint icon.png" in the asset library.
 
-### Work in progress
+### Work done — 2026-05-27 cleanup
 
-- Audit finished, results documented.
-- Awaiting Abdellah's approval to call `clear_site_scripts` on site ID `6a08929c8a27708945c53a0d` (removes the 15 redundant site-level applications; the embeds keep doing the same work).
-- Awaiting Abdellah's approval to also re-publish after the change.
+- Approved by Abdellah: remove every script applied to the site and remove the 60 orphan registered scripts.
+- Action taken via MCP: `data_scripts_tool > clear_site_scripts` on site `6a08929c8a27708945c53a0d`.
+- API response: `"All scripts removed from the site."`
+- Verification (also via MCP, immediately after):
+  - `get_site_scripts` → 404 "Custom code block not found" (= 0 applied site scripts)
+  - `get_page_scripts` on Home, Seeblick, Contact → 404 "Custom code block not found" (= 0 applied page scripts on every page)
+  - `get_registered_scripts` → still 60 entries
+
+### Limitation discovered during the cleanup
+
+The Webflow Data API does NOT expose any endpoint to delete a registered script. Confirmed in the official Webflow Developer Documentation: the `DELETE /v2/sites/{site_id}/custom_code` endpoint description states explicitly "This endpoint will not remove scripts from the site's registered scripts." Only the *applications* of a script (site-level or page-level) can be removed.
+
+Consequence:
+- The 60 entries in the MCP Bridge app library remain in the registry, but they no longer inject anything on any page.
+- They consume registry space (60 of 800 per-site quota) but do not affect bandwidth, performance, or behavior.
+- The only ways to actually empty the registry are:
+  1. Uninstall the MCP Bridge App from the Webflow Workspace (Workspace settings → Apps & integrations → Authorized apps → remove). Uninstalling an app removes all the scripts it had registered.
+  2. Wait for Webflow to ship a DELETE endpoint for registered scripts (none today).
 
 ### Remaining work
 
-- After Abdellah's go-ahead: remove the 15 site-level script applications.
-- Document orphan registered scripts that need to be removed manually from the Webflow Apps UI.
-- Optional next steps suggested to Abdellah:
-  - Decide what to do with the Contact page (currently template-state).
-  - Compress/convert oversized PNG photographs to JPG / WebP / AVIF.
-  - Lazy-load the 360° panorama JPGs (Pannellum supports this).
-  - Deduplicate the repeated logo assets.
+- Abdellah re-publishes the site so that the cleared site-level scripts are no longer included in the live HTML.
+- Decide whether to uninstall the MCP Bridge App to also wipe the 60 registry entries (optional, cosmetic only).
+- Open follow-up workstreams (separate from this task):
+  - Contact page is currently in template state (placeholder text everywhere).
+  - PNG photographs are 2.5–3.5 MB each on Home and Seeblick → convert to JPG / WebP.
+  - 360° panorama JPGs are eager-loaded by Pannellum (~8.4 MB on first paint of Seeblick).
+  - Five duplicates of `Logo cloudonpoint icon.png` in the asset library.
 
 ### Notes
 
 - All Webflow values were confirmed live via MCP, not assumed.
-- Original S3-hosted script source has been archived under `/opt/cursor/artifacts/wf_audit_scripts/` so the user can re-paste any of them into an embed if a regression appears after removal.
+- Source of every S3-hosted script archived under `/opt/cursor/artifacts/wf_audit_scripts/` (15 files) + `_BACKUP_state_before_cleanup.json` so the configuration can be reapplied if a regression appears.
+- Embeds were not touched. They keep doing the work that the cleared site-level scripts were duplicating.
