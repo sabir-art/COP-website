@@ -20,6 +20,46 @@ Use this file to document changes made to the project memory or to the Webflow w
 - [Anything important]
 ```
 
+## 2026-05-29 — Contact page Phase 4 (native form styling embed rewritten to match cc-form reference)
+
+### Context
+
+Abdellah's native Webflow form ("Email Form 4", `#email-form-4`, in the "Hero Heading Center" section, element `612a3311-74ff-9186-95f0-d124c6958060`) is the form he wants to keep, because it uses Webflow's native form pipeline. The existing embed inside that section was supposed to style it to match the decorative reference form (`cc-form-section`, element `f3f73249-8686-2973-6505-95e0e90df731`) shown above it — but it only covered layout, not the field appearance, so the fields, option boxes, radios, checkboxes and the file upload did not match.
+
+### Verified live (read-only, via Webflow MCP + published HTML/CSS)
+
+- Captured MCP snapshots of both sections (`cc-form-section` = target, `Hero Heading Center` = native).
+- Pulled the published HTML and `…webflow.shared.e68b90049.css` and measured computed styles with headless Chrome.
+- Root causes of the mismatch (all from Webflow's native `.w-*` form defaults fighting the `cc-form_*` classes):
+  - Text inputs / select were stuck at Webflow's `height:38px` (cramped) vs the reference's padded ~55px boxes.
+  - `.cc-form_options-grid` collapsed to one column because `.div-block-9{display:block}` is declared after `.cc-form_options-grid{display:grid}` in the site CSS.
+  - The option `<label>` carried `cc-form_option cc-form_option-radio` together, so the radio class's `width:16px` collapsed the whole box to ~36px (measured), with the text wrapping/overflowing.
+  - The real control was Webflow's unstyled native radio/checkbox; the option text used `.w-form-label` (wrong font).
+  - The file upload rendered Webflow's default ~282px grey button instead of the full-width dashed box with left text + right "Browse".
+
+### Changed (deliverable — must be pasted by Abdellah)
+
+- Rewrote the section's styling embed (scoped to `#email-form-4`). Full ready-to-paste block saved at repo root `contact-form-embed.html`. It:
+  - Resets `.w-input/.w-select` height + bottom margin so `cc-form_input` padding defines the box height; recolours focus to brand black.
+  - Re-asserts the 2-column `.cc-form_options-grid` (collapses to 1 column ≤991px).
+  - Rebuilds each option as the reference box (flex, `13px 17px`, `#f5f5f5`, `1px solid #d6d6d6`) and undoes the mis-applied 16px sizing on the label.
+  - Styles the native radio as a 16px grey circle (checked = brand-black dot) and the checkbox as a 16px grey square (checked = brand-black + white tick) via `appearance:none`.
+  - Restyles the file upload to the reference: full-width, default button stripped, label text on the left, a `::after` "Browse" tag on the right, default icon hidden.
+  - Uses the `--_cloudonpoint--tokens---color--*` brand tokens (with hex fallbacks) for accent/text colours.
+- The portfolio hint "up to 10 MB total" is intentionally kept (the reference shows 25 MB; only the style is matched, not the number).
+
+### Verified (local harness with the real published CSS + headless Chrome)
+
+- Side-by-side render of the decorative reference vs the native form + new embed: every field, box, radio, checkbox, select, textarea, the file upload and the submit button match.
+- Measured before→after: input height 38→55px; options grid block→grid; option box 36→657px; radio control 13px-unstyled→16px styled circle; file-upload 282px-button→full-width flex.
+- Checked states confirmed: selected radio = filled black dot, ticked checkbox = black square + white tick.
+
+### Notes / pending on Abdellah's side
+
+- The Webflow MCP cannot write embed HTML/CSS content (confirmed 2026-05-28). Abdellah must paste `contact-form-embed.html` into the existing embed in the Designer and re-publish.
+- File upload still requires a paid Site Plan to actually submit (Starter limitation) — unchanged.
+- Residence-type select Choices + per-input placeholders still set in Designer (unchanged from Phase 3).
+
 ## 2026-05-28 — Contact page Phase 3b (form functional + layout fixes + radio rebuild)
 
 ### Changed (via Webflow MCP, live on test-website---sabir, Contact page)

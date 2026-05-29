@@ -1,0 +1,213 @@
+<!--
+  Contact page — "Hero Heading Center" native form (Email Form 4) styling embed.
+
+  HOW TO USE (manual paste required — the Webflow MCP cannot write embed content):
+  1. Webflow Designer → Contact page → "Hero Heading Center" section.
+  2. Open the existing HTML Embed that currently holds the form CSS
+     (the <style> block scoped to #email-form-4).
+  3. Replace its ENTIRE content with everything below, then Save.
+  4. Re-publish the site.
+
+  WHAT IT DOES:
+  Makes the native Webflow form fields, option boxes, radios, checkboxes,
+  select, textarea and the file upload match the decorative cc-form-section
+  reference exactly, by neutralising Webflow's default .w-* form styling.
+  The "up to 10 MB total" portfolio hint is intentionally kept (not 25 MB).
+  Everything is scoped to #email-form-4 so the old cc-form-section is untouched.
+-->
+<style>
+/* ============================================================
+   Contact form — Embed CSS (Email Form 4)  ·  v2
+   Scoped to #email-form-4 so the old cc-form-section isn't touched.
+   The cc-form_* classes carry the base look; the rules below
+   neutralise Webflow's native .w-* form defaults so every field,
+   box, radio, checkbox, select, textarea and the file upload
+   match the decorative cc-form-section reference exactly.
+   ============================================================ */
+
+/* ---------- LAYOUT ---------- */
+#email-form-4 .cc-form_step-block {
+  border-bottom: 1px solid rgba(0,0,0,0.12);
+  padding-bottom: 16px;
+  margin-top: 32px;
+}
+#email-form-4 .cc-form_step-block .cc-form_step-timing { margin-left: auto; }
+#email-form-4 .cc-form_step-block .cc-form_helper { flex-basis: 100%; margin: 0; }
+
+#email-form-4 .cc-form_legal { grid-column: 1 / 2; align-self: center; margin: 0; }
+#email-form-4 #send-brief { grid-column: 2 / 3; justify-self: end; width: auto; }
+
+#email-form-4.w-form,
+#email-form-4 { row-gap: 24px; }
+
+/* ---------- 1. TEXT INPUTS / SELECT / TEXTAREA ----------
+   Webflow's .w-input / .w-select force height:38px, a 10px bottom
+   margin and a blue focus ring. Reset them so the cc-form_input
+   padding (16px 20px) defines the box height like the reference. */
+#email-form-4 .cc-form_input.w-input,
+#email-form-4 .cc-form_input.w-select,
+#email-form-4 .cc-form_textarea.w-input {
+  height: auto;
+  margin-bottom: 0;
+  box-shadow: none;
+  line-height: 1.4;
+}
+#email-form-4 .cc-form_textarea.w-input { min-height: 169px; }
+#email-form-4 .cc-form_input.w-select { background-color: #f5f5f5; }
+
+#email-form-4 .cc-form_input.w-input:focus,
+#email-form-4 .cc-form_input.w-select:focus,
+#email-form-4 .cc-form_textarea.w-input:focus {
+  border-color: var(--_cloudonpoint--tokens---color--primitive--black, #0e0e0d);
+  box-shadow: none;
+}
+
+/* labels: kill Webflow's default label margins */
+#email-form-4 .cc-form_label { margin-bottom: 8px; }
+#email-form-4 .w-form-label { margin-bottom: 0; }
+
+/* ---------- 1b. OPTION GRID ----------
+   .div-block-9 { display:block } is declared after
+   .cc-form_options-grid { display:grid } in the site CSS, so the
+   combo collapses to one column. Re-assert the 2-col grid here. */
+#email-form-4 .cc-form_options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 991px) {
+  #email-form-4 .cc-form_options-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------- 2. RADIO + CHECKBOX OPTION BOXES ----------
+   Reference markup is  .cc-form_option > .cc-form_option-radio + text.
+   In the native form the .cc-form_option class sits on the <label>,
+   and cc-form_option-radio / -check were applied to that SAME label
+   (so its 16px width collapsed the box). Re-assert the box on the
+   label, then rebuild the little dot/square on the real input. */
+#email-form-4 .cc-form_option.w-radio,
+#email-form-4 .cc-form_option.w-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  padding: 13px 17px;
+  border-radius: 0;
+  background-color: #f5f5f5;
+  border: 1px solid #d6d6d6;
+}
+/* undo the 16px circle/square sizing that landed on the label */
+#email-form-4 .cc-form_option.cc-form_option-radio,
+#email-form-4 .cc-form_option.cc-form_option-check {
+  width: 100%;
+  height: auto;
+  border-radius: 0;
+}
+
+/* real radio dot */
+#email-form-4 .w-radio-input.w-form-formradioinput {
+  -webkit-appearance: none;
+  appearance: none;
+  float: none;
+  margin: 0;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  background-color: #e6e6e6;
+  border: 1px solid #d6d6d6;
+  border-radius: 50%;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+#email-form-4 .w-radio-input.w-form-formradioinput:checked {
+  background-color: var(--_cloudonpoint--tokens---color--primitive--black, #0e0e0d);
+  border-color: var(--_cloudonpoint--tokens---color--primitive--black, #0e0e0d);
+  box-shadow: inset 0 0 0 3px #f5f5f5;
+}
+
+/* real checkbox square */
+#email-form-4 .w-checkbox-input {
+  -webkit-appearance: none;
+  appearance: none;
+  float: none;
+  margin: 0;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  background-color: #e6e6e6;
+  border: 1px solid #d6d6d6;
+  border-radius: 0;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+#email-form-4 .w-checkbox-input:checked {
+  background-color: var(--_cloudonpoint--tokens---color--primitive--black, #0e0e0d);
+  border-color: var(--_cloudonpoint--tokens---color--primitive--black, #0e0e0d);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23fafafa' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' d='M3.5 8.5l3 3 6-6.5'/%3E%3C/svg%3E");
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: 12px;
+}
+
+/* option text -> match .cc-form_option-text */
+#email-form-4 .cc-form_option .w-form-label {
+  margin: 0;
+  color: var(--_cloudonpoint--tokens---color--text--secondary, #737373);
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+/* ---------- 3. FILE UPLOAD ----------
+   Reference = full-width dashed box, label text on the left and a
+   "Browse" tag on the right. Native default renders a small grey
+   button — strip it and rebuild the reference layout. */
+#email-form-4 .cc-form_upload.w-file-upload {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+}
+#email-form-4 .cc-form_upload .w-file-upload-default {
+  display: flex;
+  width: 100%;
+}
+#email-form-4 .cc-form_upload .w-file-upload-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+  border: 0;
+  font-family: Montserrat, sans-serif;
+}
+#email-form-4 .cc-form_upload .w-icon-file-upload-icon { display: none; }
+#email-form-4 .cc-form_upload .w-file-upload-label .w-inline-block {
+  color: var(--_cloudonpoint--tokens---color--text--secondary, #737373);
+  font-family: Montserrat, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+}
+#email-form-4 .cc-form_upload .w-file-upload-label::after {
+  content: "Browse";
+  margin-left: auto;
+  color: var(--_cloudonpoint--tokens---color--text--secondary, #737373);
+  letter-spacing: 1.98px;
+  text-transform: uppercase;
+  font-family: Montserrat, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* ---------- 4. MOBILE ---------- */
+@media (max-width: 767px) {
+  #email-form-4 .cc-form_legal { grid-column: 1 / -1; margin-top: 0; }
+  #email-form-4 #send-brief { grid-column: 1 / -1; justify-self: stretch; width: 100%; }
+  #email-form-4 .cc-form_step-block { margin-top: 24px; padding-bottom: 12px; }
+}
+@media (max-width: 479px) {
+  #email-form-4 .cc-form_step-block { gap: 6px 12px; }
+}
+</style>

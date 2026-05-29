@@ -16,6 +16,15 @@ Webflow page id `6a09d8751e5baf5ab32394aa` on site `6a08929c8a27708945c53a0d`.
 
 Abdellah created a second `FormForm` ("Email Form 4", id `2c73614e-…346d`) inside a new "Hero Heading Center" section. Worked on that wrapper. Every Figma field is now a real Webflow form element with proper `name` / `type` / `required` / `domId`. See CHANGELOG `2026-05-28 — Contact page Phase 2` for the full mapping and the JS embed snippet to paste for placeholders + residence-type select options.
 
+### Phase 4 — DONE 2026-05-29: native form styling embed rewritten to match the cc-form reference
+
+Goal: make the native `#email-form-4` (in "Hero Heading Center") look exactly like the decorative `cc-form-section` reference — fields, option boxes, radios, checkboxes, select, textarea and file upload — while keeping the "up to 10 MB" portfolio hint.
+
+- Verified (read-only) both sections via MCP snapshots + published HTML/CSS + headless-Chrome computed-style measurements. Confirmed the current embed only styled layout, so Webflow's `.w-*` defaults left the option boxes collapsed (~36px), the grid single-column, inputs at 38px, and the file upload as a default grey button.
+- Rewrote the embed (scoped to `#email-form-4`). Ready-to-paste block saved at repo root `contact-form-embed.html`.
+- Local side-by-side render (real published CSS) confirms the native form now matches the reference; before→after measurements recorded in CHANGELOG.
+- ACTION FOR ABDELLAH: paste `contact-form-embed.html` into the existing embed in the "Hero Heading Center" section, then re-publish. (The Webflow MCP cannot write embed content.)
+
 ### Phase 3 — DONE 2026-05-28: form is functionally native
 
 Every Figma field is now a real Webflow form element with proper settings, the layout matches the Figma (full-width section headers, 2×2 phase + services grids, message + portfolio full width), and the Phase radios behave as a single radio group (confirmed live by Abdellah after the from-scratch rebuild). Native autocomplete attributes are posted on the text inputs. Submissions are captured by Webflow's own form pipeline.
