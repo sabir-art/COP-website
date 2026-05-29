@@ -12,7 +12,18 @@ Webflow page id `6a09d8751e5baf5ab32394aa` on site `6a08929c8a27708945c53a0d`.
 - All placeholder div text on the page now matches the Figma exactly (intro, form labels/options/hints, stats, sidebar).
 - Sidebar restructured from 3 to 4 blocks (Studio / Direct / Reassurance / Response) — see CHANGELOG.
 
-### Phase 2 — Pending: functional form rebuild
+### Phase 2 — DONE 2026-05-28: functional native form built
+
+Abdellah created a second `FormForm` ("Email Form 4", id `2c73614e-…346d`) inside a new "Hero Heading Center" section. Worked on that wrapper. Every Figma field is now a real Webflow form element with proper `name` / `type` / `required` / `domId`. See CHANGELOG `2026-05-28 — Contact page Phase 2` for the full mapping and the JS embed snippet to paste for placeholders + residence-type select options.
+
+### Phase 3 — Pending: visual polish + cleanup
+
+- Add section headers (`01 About you`, `02 Your project`, `03 Tell us more`) and helper texts to the new form (currently they only exist in the older decorative cc-form_* section).
+- Apply the Figma grid layout via CSS on `Div Block 9` (2-column for About you, 2×2 for phase + services).
+- Once visually validated, delete the old default `Email Form 3` (`7ee09f21-…6def`) and the decorative `cc-form_*` section.
+- Re-publish so the live URL serves the new form and Webflow's submission inbox starts catching `Email Form 4`.
+
+### Phase 2 — Pending: functional form rebuild (kept for history)
 
 Abdellah decided (2026-05-28) to rebuild the form as a native Webflow form (not an external embed). The current visual fields are pure decorative divs — the only real form on the page is a leftover default `FormForm` (`7ee09f21-7f0d-ad73-52cb-2a7f6bfa6def`, "Email Form 3") with just Name + Email + Submit.
 

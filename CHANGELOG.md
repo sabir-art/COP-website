@@ -20,6 +20,82 @@ Use this file to document changes made to the project memory or to the Webflow w
 - [Anything important]
 ```
 
+## 2026-05-28 — Contact page Phase 2 (native Webflow form built)
+
+### Changed (via Webflow MCP, live on test-website---sabir, Contact page `6a09d8751e5baf5ab32394aa`)
+
+- Abdellah had created a second native `FormForm` ("Email Form 4", id `2c73614e-0adb-a64a-b8be-00a4499d346d`, style `Form`) inside a new section he called "Hero Heading Center", with 7 default text-input rows (`Div Block 8` for the first row, six `Div Block 9` for the others) plus two stray placeholder divs.
+- Removed the two stray divs left between the rows.
+- Configured rows 1–5 as real text inputs with Webflow `name` / `type` / `required` / `domId` settings:
+  - Row 1 → Full name * (text, required, domId `full-name`)
+  - Row 2 → Company (text, optional, domId `company`)
+  - Row 3 → Email * (email, required, domId `email`)
+  - Row 4 → Phone (tel, optional, domId `phone`)
+  - Row 5 → Project location * (text, required, domId `project-location`)
+- Replaced the row-6 text input with a real `FormSelect` (id `8b0f5c2c-0cb5-3683-ed94-5f038b7a65cd`, name `Residence type`, domId `residence-type`).
+- Replaced the row-7 text input with a `FormRadioWrapper` group of four radios sharing the group name `project-phase`: `early-planning`, `permit-phase`, `pre-sales-preparation`, `commercialisation-started`.
+- Appended a new Services row containing one `FormBlockLabel` (`Services needed`) and four independent `FormCheckboxInput`: `Services - Architectural visualisation`, `Services - Project website`, `Services - Digital communication`, `Services - Not sure yet`.
+- Appended a Message row with `FormBlockLabel` (`Message *`) and a `FormTextarea` (name `Message`, required, domId `message`).
+- Appended a Portfolio row with `FormBlockLabel` (`Portfolio & references`) and a `FormFileUploadWrapper` (the underlying `FormFileUploadInput` carries name `Portfolio`, domId `portfolio-file`). The upload's visible text was set to `Attach portfolio or project documents` and the info line to `Optional. PDF, images or a deck — up to 25 MB total.`
+- Appended a `FormButton` with `buttonText` `Send brief →`, `loadingText` `Sending…`, domId `send-brief`.
+
+### Webflow MCP limitations encountered (recorded for future agents)
+
+- `placeholder` is a reserved attribute name in the Designer MCP — neither `add_or_update_attribute` nor `set_settings` with `attributes` will accept it, and `placeholder` is not in the FormTextInput / FormSelect / FormTextarea settings list. Workaround: set placeholders at runtime through an HTML Embed (see snippet below).
+- `FormSelect` does not accept child `<option>` elements via `whtml_builder` (`doesn't support append creation position`), nor a `choices` / `options` setting. Workaround: populate options at runtime via JS embed (see below).
+
+### Pending after Phase 2
+
+- Section headers (`01 About you`, `02 Your project`, `03 Tell us more`) and per-section helper texts (`Just so we know who we're writing back to…`, `Pick the closest match…`, `Select all that apply…`, `A few lines on the project…`, legal disclaimer) are not yet rendered inside the new `FormForm`. They live only in the older decorative `cc-form_*` section. Either add them as text divs between rows of the new form, or keep the decorative wrapper and slot the new inputs inside it.
+- The leftover default `FormForm` "Email Form 3" (`7ee09f21-…6def`, Name + Email + Submit) is still on the page — to delete once the new form is validated.
+- The old decorative `cc-form_*` section is still on the page — to hide or delete once the new form is validated.
+- Visual layout of the new form does not yet match the Figma grid (2-column for About you / 2×2 for phase & services) — needs CSS on `Div Block 9` plus a row wrapper for the 2-column pairs.
+
+### Required embed (Abdellah pastes manually)
+
+Place a Webflow `Embed` element anywhere on the Contact page (e.g. at the end of the form section) and paste:
+
+```html
+<script>
+(function(){
+  var ph = {
+    'full-name': 'Your full name',
+    'company': 'Optional',
+    'email': 'anna@cloudonpoint.ch',
+    'phone': '+41 …',
+    'project-location': 'City, canton or region',
+    'message': 'e.g. 18-unit lakeside development in Zug, permit expected Q3, looking to begin pre-sales communication early next year.'
+  };
+  Object.keys(ph).forEach(function(id){
+    var el = document.getElementById(id);
+    if (el && !el.placeholder) el.setAttribute('placeholder', ph[id]);
+  });
+
+  var sel = document.getElementById('residence-type');
+  if (sel && sel.options.length === 0) {
+    var opts = [
+      { v: '', t: 'Select an option', placeholder: true },
+      { v: 'Single-family home',                  t: 'Single-family home' },
+      { v: 'Multi-family residential',            t: 'Multi-family residential' },
+      { v: 'Apartment building / condominiums',   t: 'Apartment building / condominiums' },
+      { v: 'Terraced / townhouses',               t: 'Terraced / townhouses' },
+      { v: 'Mixed-use development',               t: 'Mixed-use development' },
+      { v: 'Senior / assisted living',            t: 'Senior / assisted living' }
+    ];
+    opts.forEach(function(o){
+      var op = document.createElement('option');
+      op.value = o.v;
+      op.textContent = o.t;
+      if (o.placeholder) { op.disabled = true; op.selected = true; }
+      sel.appendChild(op);
+    });
+  }
+})();
+</script>
+```
+
+The script is idempotent (won't overwrite a placeholder already set in Designer, won't duplicate select options).
+
 ## 2026-05-28 — Contact page Phase 1 (text + sidebar restructure)
 
 ### Changed (via Webflow MCP, live on test-website---sabir)
