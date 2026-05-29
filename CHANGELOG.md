@@ -20,6 +20,25 @@ Use this file to document changes made to the project memory or to the Webflow w
 - [Anything important]
 ```
 
+## 2026-05-28 — Contact page Phase 3a (section headers + helpers + legal in the native form)
+
+### Changed (via Webflow MCP, live on test-website---sabir, Contact page)
+
+Inserted the Figma phase headers and helper copy as sibling div blocks inside `FormForm` `2c73614e-…346d`, reusing the existing `cc-form_*` classes so the text picks up the styles that were already defined for the decorative form:
+
+- Before Row 1 (Full name) — section block: `01` / `About you` / `Takes ~3 minutes` / helper `Just so we know who we're writing back to. Fields marked * are required.` (wrapper id `621f351e-…b08a`).
+- Before Row 5 (Project location) — section block: `02` / `Your project` (wrapper id `cab44e05-…c9da`).
+- After Row 7 (project phase radios) — `cc-form_small-hint` `Pick the closest match — we'll calibrate from there.` (id `381fe026-…9295`).
+- After Services row — `cc-form_small-hint` `Select all that apply, or leave blank.` (id `6f85444a-…ecf1`).
+- Before Message row — section block: `03` / `Tell us more` (wrapper id `9851af58-…a8cd`).
+- After Message row — `cc-form_small-hint` `A few lines on the project — type, scale, timing, commercial objective.` (id `7b90f22a-…8114`).
+- Before Submit button — `cc-form_legal` `By sending this brief, you agree to be contacted by Cloudonpoint regarding your project. No marketing emails, no third parties.` (id `74e5a288-…88cd`).
+
+### Notes
+
+- Section blocks are wrapped in a fresh class `cc-form_step-block` (Webflow auto-created) — apply flex layout there if a 2-column row (num/title left, timing right) is wanted.
+- The Portfolio "Optional. PDF, images or a deck — up to 25 MB total." line was set directly on the FormFileUploadInfo during Phase 2, so no extra hint is needed below the upload control.
+
 ## 2026-05-28 — Contact page Phase 2 (native Webflow form built)
 
 ### Changed (via Webflow MCP, live on test-website---sabir, Contact page `6a09d8751e5baf5ab32394aa`)
