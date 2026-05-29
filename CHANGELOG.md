@@ -20,6 +20,30 @@ Use this file to document changes made to the project memory or to the Webflow w
 - [Anything important]
 ```
 
+## 2026-05-29 — Contact page Phase 5b (Residence type: native CSS abandoned, custom JS dropdown built)
+
+### Context
+
+The Phase 5 native-`<select>` CSS did not match the reference once published: the open option list still showed the browser's blue highlight on hover and stray coloured option text (orange/green) on Abdellah's machine. Confirmed root cause: a native `<select>` option list is painted by the OS/browser and cannot be fully styled (blue highlight + option colours are not author-controllable across platforms).
+
+### Changed (deliverable — must be pasted by Abdellah)
+
+- Reworked `contact-form-embed.html` to REPLACE the native dropdown with a custom listbox we fully control:
+  - Added section `3c. CUSTOM SELECT DROPDOWN` CSS: `.cop-select` trigger (matches the other cc-form inputs + chevron), `.cop-select__list` light-grey panel `#f0f0f0`, `.cop-select__option` dark text, and `.is-active / :hover` = solid brand-black `#0e0e0d` with white `#fafafa` text. Placeholder row stays muted.
+  - Added a `<script>` after `</style>` that, for every `select.cc-form_input / .w-select` inside `#email-form-4`, hides the native control (`display:none`, kept in the form for submission) and builds the custom UI synced to it (click option → sets `select.value` + dispatches `change`). Idempotent (`window.__COP_SELECT_BOOTED__`), closes on outside-click / Esc, and auto-applies to any future select added to the form.
+- The Phase 5 native `.w-select option` rules are kept as a no-JS fallback only.
+
+### Verified (local headless Chrome render of the real embed)
+
+- Built a harness with the live select markup + this embed and rendered it in google-chrome-stable.
+- Open dropdown now matches the reference: light-grey panel, dark option text, single full-width solid-black highlighted/selected row with white text, no blue highlight, no stray colours, placeholder muted.
+- Confirmed the native select is hidden (`display:none`) yet still submits: after selecting an option the hidden `<select>` value = `Apartment building / condominiums`. Active row computed colours = bg `rgb(14,14,13)`, text `rgb(250,250,250)`.
+
+### Notes / pending on Abdellah's side
+
+- Paste the FULL updated `contact-form-embed.html` into the "Contact form glue" embed in the Designer, then re-publish. The Webflow MCP cannot write embed content.
+- The embed now contains both a `<style>` and a `<script>` block — that is fine for a manually-pasted Webflow Embed element (the header embed already mixes both). It is only the MCP `whtml_builder` that rejects multi-root content.
+
 ## 2026-05-29 — Contact page Phase 5 (Residence type select styled to match the reference dropdown)
 
 ### Context

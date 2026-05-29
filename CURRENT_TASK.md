@@ -16,7 +16,14 @@ Webflow page id `6a09d8751e5baf5ab32394aa` on site `6a08929c8a27708945c53a0d`.
 
 Abdellah created a second `FormForm` ("Email Form 4", id `2c73614e-…346d`) inside a new "Hero Heading Center" section. Worked on that wrapper. Every Figma field is now a real Webflow form element with proper `name` / `type` / `required` / `domId`. See CHANGELOG `2026-05-28 — Contact page Phase 2` for the full mapping and the JS embed snippet to paste for placeholders + residence-type select options.
 
-### Phase 5 — DONE 2026-05-29: Residence type select styled like the reference dropdown
+### Phase 5b — DONE 2026-05-29: native CSS abandoned, custom JS dropdown built (matches reference exactly)
+
+Phase 5's native-`<select>` CSS did not match once published (browser blue highlight + stray option colours — a native option list can't be fully styled). Replaced it with a custom listbox in `contact-form-embed.html`:
+- CSS section `3c. CUSTOM SELECT DROPDOWN` + a `<script>` that hides each native select (kept for submit) and builds a fully-controlled UI: light-grey panel, dark text, solid brand-black highlighted/selected row with white text. Works for any select added to `#email-form-4`.
+- Verified by rendering the real embed in headless google-chrome: open dropdown matches the reference; the hidden native select still submits its value.
+- ACTION FOR ABDELLAH: paste the full updated `contact-form-embed.html` into the "Contact form glue" embed (it now has a `<style>` + a `<script>`), then re-publish.
+
+### Phase 5 — SUPERSEDED by 5b 2026-05-29: Residence type select styled like the reference dropdown
 
 Goal: make the Residence type `<select>` read like the reference ("Garden Apartment" example) — clean light-grey control with a custom chevron, option list with a solid brand-black highlighted row (white text) on a light-grey list — and have every future select inherit the same style.
 
