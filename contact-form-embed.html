@@ -325,6 +325,36 @@
 }
 #email-form-4 .cop-select.is-open .cop-select__list { display: block; }
 
+/* ---- discreet custom scrollbar ----
+   Chrome / Safari / Edge (WebKit/Blink): a thin brand-grey pill on a
+   transparent track, inset 2px so it floats off the edge. Defining
+   ::-webkit-scrollbar makes it a classic (always-visible) bar, so it
+   stays subtle but reachable. NOTE: do NOT also set scrollbar-width here —
+   Chrome 121+ would then ignore these rules. Firefox gets the standard
+   properties in the @supports block below instead. */
+#email-form-4 .cop-select__list::-webkit-scrollbar { width: 10px; }
+#email-form-4 .cop-select__list::-webkit-scrollbar-track {
+  background: transparent;
+}
+#email-form-4 .cop-select__list::-webkit-scrollbar-thumb {
+  background-color: rgba(14,14,13,0.3);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+#email-form-4 .cop-select__list::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(14,14,13,0.55);
+}
+/* Firefox only — guarded by a Firefox-only pseudo-element so these standard
+   props don't apply in Chrome 121+ (which would otherwise ignore the
+   ::-webkit-scrollbar rules above). */
+@supports selector(::-moz-progress-bar) {
+  #email-form-4 .cop-select__list {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(14,14,13,0.35) transparent;
+  }
+}
+
 /* option rows — dark text on the light-grey panel */
 #email-form-4 .cop-select__option {
   padding: 15px 20px;

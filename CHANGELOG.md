@@ -20,6 +20,28 @@ Use this file to document changes made to the project memory or to the Webflow w
 - [Anything important]
 ```
 
+## 2026-05-29 — Contact page Phase 5c (discreet custom scrollbar on the dropdown panel)
+
+### Context
+
+Abdellah asked to replace the native browser scrollbar inside the dropdown panel with a discreet, custom, on-brand one.
+
+### Changed (deliverable — must be pasted by Abdellah)
+
+- Added a discreet custom scrollbar to `#email-form-4 .cop-select__list` in `contact-form-embed.html`:
+  - Chrome / Safari / Edge: `::-webkit-scrollbar` width 10px, transparent track, a thin brand-grey rounded thumb (`rgba(14,14,13,0.3)`, ~4px visible via a 3px transparent inset + `background-clip: padding-box`), darkening to `0.55` on hover.
+  - Firefox: `scrollbar-width: thin` + `scrollbar-color` inside `@supports selector(::-moz-progress-bar)` (a Firefox-only guard) so the standard props do NOT disable the WebKit styling in Chrome 121+.
+
+### Important CSS finding (recorded for future agents)
+
+- If `scrollbar-width`/`scrollbar-color` (standard) are set on the SAME element as `::-webkit-scrollbar`, Chrome 121+ honours the standard props and IGNORES the WebKit pseudo-elements. Confirmed live in headless Chrome (both set → reserved gutter measured as the thin value). Keep them separated (WebKit for Blink/WebKit, standard for Firefox only).
+- `@supports (-moz-appearance: none)` is NOT a reliable Firefox-only guard — Chromium also matches it. Use `@supports selector(::-moz-progress-bar)` instead.
+
+### Verified / limitation
+
+- Re-rendered the embed in headless Chrome: the custom dropdown still works (active row bg `rgb(14,14,13)`, white text; hidden native select still submits its value).
+- LIMITATION: this VM's Chrome (Linux) always uses overlay scrollbars (every probe — webkit-only, standard-only, none — reserved ~2px and auto-hid), so the painted scrollbar thumb could not be captured in a screenshot here. The CSS is the standard, correct approach and will render on Abdellah's machine (his earlier screenshot showed a classic scrollbar).
+
 ## 2026-05-29 — Contact page Phase 5b (Residence type: native CSS abandoned, custom JS dropdown built)
 
 ### Context

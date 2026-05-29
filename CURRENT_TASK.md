@@ -16,6 +16,14 @@ Webflow page id `6a09d8751e5baf5ab32394aa` on site `6a08929c8a27708945c53a0d`.
 
 Abdellah created a second `FormForm` ("Email Form 4", id `2c73614e-…346d`) inside a new "Hero Heading Center" section. Worked on that wrapper. Every Figma field is now a real Webflow form element with proper `name` / `type` / `required` / `domId`. See CHANGELOG `2026-05-28 — Contact page Phase 2` for the full mapping and the JS embed snippet to paste for placeholders + residence-type select options.
 
+### Phase 5c — DONE 2026-05-29: discreet custom scrollbar on the dropdown panel
+
+Added a thin, on-brand custom scrollbar to `.cop-select__list` in `contact-form-embed.html`:
+- Chrome/Safari/Edge: `::-webkit-scrollbar` (10px, transparent track, thin rounded brand-grey thumb, darker on hover).
+- Firefox: `scrollbar-width`/`scrollbar-color` inside `@supports selector(::-moz-progress-bar)` so they don't disable the WebKit styling in Chrome 121+.
+- Finding: do NOT set standard `scrollbar-width`/`-color` on the same element as `::-webkit-scrollbar` (Chrome 121+ then ignores the WebKit rules). `@supports (-moz-appearance:none)` is not Firefox-only; use `@supports selector(::-moz-progress-bar)`.
+- Limitation: this VM's Chrome forces overlay scrollbars, so the thumb couldn't be screenshotted here; CSS is standard and will render on Abdellah's machine.
+
 ### Phase 5b — DONE 2026-05-29: native CSS abandoned, custom JS dropdown built (matches reference exactly)
 
 Phase 5's native-`<select>` CSS did not match once published (browser blue highlight + stray option colours — a native option list can't be fully styled). Replaced it with a custom listbox in `contact-form-embed.html`:
