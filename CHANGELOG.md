@@ -20,6 +20,67 @@ Use this file to document changes made to the project memory or to the Webflow w
 - [Anything important]
 ```
 
+## 2026-05-28 — Contact page Phase 3b (form functional + layout fixes + radio rebuild)
+
+### Changed (via Webflow MCP, live on test-website---sabir, Contact page)
+
+Worked on the FormForm Abdellah added inside his "Hero Heading Center" section (Email Form 4, id `2c73614e-…346d`).
+
+**Layout fixes (full-width spanning, 2×2 option grids):**
+- Created `cc-form_step-block` style (grid-column: 1 / -1, flex, baseline, gap, margin) and applied it to the three section header wrappers (`621f351e-…b08a` 01 About you, `cab44e05-…c9da` 02 Your project, `9851af58-…a8cd` 03 Tell us more).
+- Created `cc-form_full` style (grid-column: 1 / -1) and applied it as combo to the Phase row (`bfe2691c-…bd0a`), Services row (`4a546763-…43eb`), Message row (`ac7c4221-…eec9`) and Portfolio row (`d2cf5e30-…0a85`).
+- Applied existing `cc-form_options-grid` style as combo on Phase + Services rows so the four option wrappers inside form a 2×2 grid.
+- Updated `cc-form_helper`, `cc-form_small-hint`, `cc-form_legal`, `cc-form_label` with `grid-column: 1 / -1` so they span the inner grid columns when nested.
+
+**Existing user-defined `cc-form_*` styles re-applied to the new form elements:**
+- `cc-form_label` on all 10 FormBlockLabels.
+- `cc-form_option` + `cc-form_option-radio` on the four phase radio wrappers.
+- `cc-form_option` + `cc-form_option-check` on the four services checkbox wrappers.
+- `cc-form_input` on the 5 text inputs + the FormSelect.
+- `cc-form_textarea` on the message FormTextarea.
+- `cc-form_upload` on the FormFileUploadWrapper.
+- `cc-form_submit` on the FormButton.
+
+**Portfolio restructure:**
+- Removed the `FormFileUploadInfo` element that lived inside `FormFileUploadDefault` (Webflow rendered it on the side of the Browse control by default).
+- Inserted a new `cc-form_small-hint` div as a sibling immediately after the FormFileUploadWrapper (id `3b8f4b72-…d40a`) carrying the text `Optional. PDF, images or a deck — up to 10 MB total.` (10 MB matches the actual Webflow paid-plan upload limit, not the 25 MB shown earlier in the Figma).
+
+**HtmlEmbed slot for any glue JS/CSS later:**
+- Inserted an empty `HtmlEmbed` as the last child of the FormForm (id `7cea9fae-…b268`, domId `contact-form-glue`, Navigator name "Contact form glue"). The page works without it; Abdellah pastes JS/CSS into it only if needed for things MCP can't do natively (e.g., Google Places integration).
+
+**Native autocomplete attributes** (Custom Attributes panel via Webflow MCP):
+- `autocomplete="name"` on `#full-name`
+- `autocomplete="organization"` on `#company`
+- `autocomplete="email"` on `#email`
+- `autocomplete="tel"` on `#phone`
+- `autocomplete="street-address"` on `#project-location`
+- Chrome / Safari now offer to autofill the saved profile values.
+
+**Project phase radios — rebuilt from zero:**
+- Original 4 radios were created in two passes (1 alone, then 3 in a batch). The 3 from the batch never grouped correctly with the first one after publishing, even though `groupName="project-phase"` was set on each input and read back successfully via `all_raw_settings`.
+- Iterative attempts at re-setting `groupName` and recreating radios 3 & 4 individually produced partial fixes only (the rebuilt subset grouped together, but mixed with the originals it stayed broken).
+- Final fix: deleted all 4 radio wrappers and recreated each one with a single `element_builder` call followed by its own `set_settings` + `set_text` + `set_style` calls, in order Early planning → Permit phase → Pre-sales preparation → Commercialisation started. With this clean one-at-a-time path the four radios behave as a real radio group (confirmed live by Abdellah after republish).
+- Current IDs and values:
+  - `phase-early` → `early-planning` (wrapper `fab844e9-…97a7`)
+  - `phase-permit` → `permit-phase` (wrapper `17c3a3f8-…d763`)
+  - `phase-presales` → `pre-sales-preparation` (wrapper `58362401-…10e8`)
+  - `phase-commercialisation` → `commercialisation-started` (wrapper `3c264a3c-…77f0`)
+
+### Webflow MCP gotchas confirmed during this phase
+
+- `placeholder` and `name` HTML attributes are both reserved — neither `add_or_update_attribute` nor `set_settings` with `attributes` will accept them. `autocomplete` is fine.
+- `FormSelect` does not accept `<option>` children via `whtml_builder` and exposes no `choices` / `options` setting. The 6 Residence type options must be added manually in the Designer (Element Settings → Choices).
+- Placeholders must also be set manually per input in the Designer (Element Settings → Placeholder).
+- Creating multiple `FormRadioInput` elements inside a single `element_builder` call corrupts the `groupName` binding on the rendered output even when `set_settings` reports success. Workaround: one radio per `element_builder` call.
+- `style_tool > update_style` and `element_snapshot_tool` time out frequently under load; retry or split the work.
+
+### Pending on Abdellah's side
+
+- Add the 6 Residence type options in Designer (`Single-family home`, `Multi-family residential`, `Apartment building / condominiums`, `Terraced / townhouses`, `Mixed-use development`, `Senior / assisted living`).
+- Set the 6 placeholders in Designer per input (Full name → `Your full name`, Company → `Optional`, Email → `anna@cloudonpoint.ch`, Phone → `+41 …`, Project location → `City, canton or region`, Message → `e.g. 18-unit lakeside development in Zug, permit expected Q3, looking to begin pre-sales communication early next year.`).
+- File upload: works at the structure level but submission fails on the current Starter plan. Field is intentionally kept in the form for when Abdellah upgrades to a Site Plan that supports uploads.
+- Project location → live address suggestions (Google Places–style) require an external service (Google Places, Mapbox, or Algolia Places) with an API key plus a JS snippet. There is no Webflow-native path for that. The `contact-form-glue` embed is already in place for hosting the snippet when Abdellah picks a provider.
+
 ## 2026-05-28 — Contact page Phase 3a (section headers + helpers + legal in the native form)
 
 ### Changed (via Webflow MCP, live on test-website---sabir, Contact page)
