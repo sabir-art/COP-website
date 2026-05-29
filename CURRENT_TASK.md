@@ -16,6 +16,15 @@ Webflow page id `6a09d8751e5baf5ab32394aa` on site `6a08929c8a27708945c53a0d`.
 
 Abdellah created a second `FormForm` ("Email Form 4", id `2c73614e-…346d`) inside a new "Hero Heading Center" section. Worked on that wrapper. Every Figma field is now a real Webflow form element with proper `name` / `type` / `required` / `domId`. See CHANGELOG `2026-05-28 — Contact page Phase 2` for the full mapping and the JS embed snippet to paste for placeholders + residence-type select options.
 
+### Phase 5 — DONE 2026-05-29: Residence type select styled like the reference dropdown
+
+Goal: make the Residence type `<select>` read like the reference ("Garden Apartment" example) — clean light-grey control with a custom chevron, option list with a solid brand-black highlighted row (white text) on a light-grey list — and have every future select inherit the same style.
+
+- Verified live (read-only): form `#email-form-4`, select `Residence-type` (class `cc-form_input w-select`), placeholder + 6 options already populated natively.
+- Added section `3b. SELECT` to `contact-form-embed.html`, scoped to `.cc-form_input.w-select` (class, not id) so any future select inherits it.
+- ACTION FOR ABDELLAH: paste the full updated `contact-form-embed.html` into the "Contact form glue" embed in the Designer, then re-publish. (The Webflow MCP cannot write embed content.)
+- Caveat: the open option list is OS-painted on macOS (colours ignored there); the closed control matches everywhere.
+
 ### Phase 4 — DONE 2026-05-29: native form styling embed rewritten to match the cc-form reference
 
 Goal: make the native `#email-form-4` (in "Hero Heading Center") look exactly like the decorative `cc-form-section` reference — fields, option boxes, radios, checkboxes, select, textarea and file upload — while keeping the "up to 10 MB" portfolio hint.

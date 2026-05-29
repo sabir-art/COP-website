@@ -201,6 +201,55 @@
   font-weight: 500;
 }
 
+/* ---------- 3b. SELECT — Residence type (and every future cc-form select) ----------
+   Target look (reference "Garden Apartment" example): a clean light-grey
+   control with a custom chevron, opening an option list where the
+   highlighted / selected row is solid brand-black with white text on an
+   otherwise light-grey list. Scoped to .cc-form_input.w-select (a class,
+   NOT an id) so ANY <select> added to the form later inherits this style.
+   Note: the open <option> list is OS-painted on macOS Safari/Chrome, which
+   ignore option colours; on Windows/Linux Chromium and Firefox the black
+   highlight applies. The closed control matches on every platform. */
+#email-form-4 .cc-form_input.w-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: #f5f5f5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%230e0e0d' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round' d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 20px center;
+  background-size: 14px 14px;
+  padding-right: 48px;
+  color: var(--_cloudonpoint--tokens---color--text--secondary, #737373);
+  font-family: Montserrat, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+/* option list rows — light-grey background, near-black text */
+#email-form-4 .cc-form_input.w-select option {
+  background-color: #f0f0f0;
+  color: var(--_cloudonpoint--tokens---color--primitive--black, #0e0e0d);
+  padding: 10px 16px;
+  font-family: Montserrat, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+}
+/* highlighted / selected row — solid brand-black with white text */
+#email-form-4 .cc-form_input.w-select option:checked,
+#email-form-4 .cc-form_input.w-select option:hover,
+#email-form-4 .cc-form_input.w-select option:focus {
+  background: var(--_cloudonpoint--tokens---color--primitive--black, #0e0e0d);
+  background-color: var(--_cloudonpoint--tokens---color--primitive--black, #0e0e0d);
+  color: #fafafa;
+  -webkit-text-fill-color: #fafafa;
+}
+/* keep the "Select project type" placeholder row muted */
+#email-form-4 .cc-form_input.w-select option[value=""] {
+  color: var(--_cloudonpoint--tokens---color--text--secondary, #737373);
+  -webkit-text-fill-color: var(--_cloudonpoint--tokens---color--text--secondary, #737373);
+}
+
 /* ---------- 4. MOBILE ---------- */
 @media (max-width: 767px) {
   #email-form-4 .cc-form_legal { grid-column: 1 / -1; margin-top: 0; }

@@ -20,6 +20,30 @@ Use this file to document changes made to the project memory or to the Webflow w
 - [Anything important]
 ```
 
+## 2026-05-29 — Contact page Phase 5 (Residence type select styled to match the reference dropdown)
+
+### Context
+
+Abdellah wants the Residence type `<select>` (`#email-form-4` → `Residence-type`, class `cc-form_input w-select`) to read like the reference dropdown ("Garden Apartment" example): a clean light-grey control with a custom chevron, opening an option list where the highlighted / selected row is solid brand-black with white text on an otherwise light-grey list. He also wants every future `<select>` added to the form to inherit the same look.
+
+### Verified live (read-only)
+
+- Pulled the published Contact page HTML (`https://test-website---sabir.webflow.io/contact`, HTTP 200). Confirmed the form is `<form id="email-form-4" …>` and the select is `<select id="Residence-type" name="Residence-type" class="cc-form_input w-select">` with the placeholder `Select project type` plus the 6 residence options already populated natively (no JS needed).
+- Confirmed the existing embed CSS in the live page matches repo `contact-form-embed.html` (the "Contact form glue" embed).
+
+### Changed (deliverable — must be pasted by Abdellah)
+
+- Added a new section `3b. SELECT` to `contact-form-embed.html`, scoped to `#email-form-4 .cc-form_input.w-select` (a CLASS, not an id) so every select in the form inherits it:
+  - `appearance: none` + a custom inline-SVG chevron (brand-black) on the right, `#f5f5f5` control background, Montserrat 14px/500.
+  - `option` rows: light-grey `#f0f0f0` background, near-black text, padding.
+  - `option:checked / :hover / :focus`: solid brand-black background + white text (with `-webkit-text-fill-color` to force it in Chromium).
+  - placeholder row `option[value=""]` kept muted (secondary grey).
+
+### Notes / pending on Abdellah's side
+
+- The Webflow MCP cannot write embed HTML/CSS content (confirmed 2026-05-28). Abdellah must paste the full updated `contact-form-embed.html` into the existing "Contact form glue" embed in the Designer and re-publish.
+- Platform caveat: the OPEN `<option>` list is OS-painted on macOS Safari/Chrome, which ignore option colours; the black highlight applies on Windows/Linux Chromium and Firefox. The closed control (chevron + grey box) matches on every platform.
+
 ## 2026-05-29 — Contact page Phase 4 (native form styling embed rewritten to match cc-form reference)
 
 ### Context
