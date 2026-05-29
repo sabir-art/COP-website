@@ -20,6 +20,228 @@ Use this file to document changes made to the project memory or to the Webflow w
 - [Anything important]
 ```
 
+## 2026-05-29 — Contact page Phase 4 (native form styling embed rewritten to match cc-form reference)
+
+### Context
+
+Abdellah's native Webflow form ("Email Form 4", `#email-form-4`, in the "Hero Heading Center" section, element `612a3311-74ff-9186-95f0-d124c6958060`) is the form he wants to keep, because it uses Webflow's native form pipeline. The existing embed inside that section was supposed to style it to match the decorative reference form (`cc-form-section`, element `f3f73249-8686-2973-6505-95e0e90df731`) shown above it — but it only covered layout, not the field appearance, so the fields, option boxes, radios, checkboxes and the file upload did not match.
+
+### Verified live (read-only, via Webflow MCP + published HTML/CSS)
+
+- Captured MCP snapshots of both sections (`cc-form-section` = target, `Hero Heading Center` = native).
+- Pulled the published HTML and `…webflow.shared.e68b90049.css` and measured computed styles with headless Chrome.
+- Root causes of the mismatch (all from Webflow's native `.w-*` form defaults fighting the `cc-form_*` classes):
+  - Text inputs / select were stuck at Webflow's `height:38px` (cramped) vs the reference's padded ~55px boxes.
+  - `.cc-form_options-grid` collapsed to one column because `.div-block-9{display:block}` is declared after `.cc-form_options-grid{display:grid}` in the site CSS.
+  - The option `<label>` carried `cc-form_option cc-form_option-radio` together, so the radio class's `width:16px` collapsed the whole box to ~36px (measured), with the text wrapping/overflowing.
+  - The real control was Webflow's unstyled native radio/checkbox; the option text used `.w-form-label` (wrong font).
+  - The file upload rendered Webflow's default ~282px grey button instead of the full-width dashed box with left text + right "Browse".
+
+### Changed (deliverable — must be pasted by Abdellah)
+
+- Rewrote the section's styling embed (scoped to `#email-form-4`). Full ready-to-paste block saved at repo root `contact-form-embed.html`. It:
+  - Resets `.w-input/.w-select` height + bottom margin so `cc-form_input` padding defines the box height; recolours focus to brand black.
+  - Re-asserts the 2-column `.cc-form_options-grid` (collapses to 1 column ≤991px).
+  - Rebuilds each option as the reference box (flex, `13px 17px`, `#f5f5f5`, `1px solid #d6d6d6`) and undoes the mis-applied 16px sizing on the label.
+  - Styles the native radio as a 16px grey circle (checked = brand-black dot) and the checkbox as a 16px grey square (checked = brand-black + white tick) via `appearance:none`.
+  - Restyles the file upload to the reference: full-width, default button stripped, label text on the left, a `::after` "Browse" tag on the right, default icon hidden.
+  - Uses the `--_cloudonpoint--tokens---color--*` brand tokens (with hex fallbacks) for accent/text colours.
+- The portfolio hint "up to 10 MB total" is intentionally kept (the reference shows 25 MB; only the style is matched, not the number).
+
+### Verified (local harness with the real published CSS + headless Chrome)
+
+- Side-by-side render of the decorative reference vs the native form + new embed: every field, box, radio, checkbox, select, textarea, the file upload and the submit button match.
+- Measured before→after: input height 38→55px; options grid block→grid; option box 36→657px; radio control 13px-unstyled→16px styled circle; file-upload 282px-button→full-width flex.
+- Checked states confirmed: selected radio = filled black dot, ticked checkbox = black square + white tick.
+
+### Notes / pending on Abdellah's side
+
+- The Webflow MCP cannot write embed HTML/CSS content (confirmed 2026-05-28). Abdellah must paste `contact-form-embed.html` into the existing embed in the Designer and re-publish.
+- File upload still requires a paid Site Plan to actually submit (Starter limitation) — unchanged.
+- Residence-type select Choices + per-input placeholders still set in Designer (unchanged from Phase 3).
+
+## 2026-05-28 — Contact page Phase 3b (form functional + layout fixes + radio rebuild)
+
+### Changed (via Webflow MCP, live on test-website---sabir, Contact page)
+
+Worked on the FormForm Abdellah added inside his "Hero Heading Center" section (Email Form 4, id `2c73614e-…346d`).
+
+**Layout fixes (full-width spanning, 2×2 option grids):**
+- Created `cc-form_step-block` style (grid-column: 1 / -1, flex, baseline, gap, margin) and applied it to the three section header wrappers (`621f351e-…b08a` 01 About you, `cab44e05-…c9da` 02 Your project, `9851af58-…a8cd` 03 Tell us more).
+- Created `cc-form_full` style (grid-column: 1 / -1) and applied it as combo to the Phase row (`bfe2691c-…bd0a`), Services row (`4a546763-…43eb`), Message row (`ac7c4221-…eec9`) and Portfolio row (`d2cf5e30-…0a85`).
+- Applied existing `cc-form_options-grid` style as combo on Phase + Services rows so the four option wrappers inside form a 2×2 grid.
+- Updated `cc-form_helper`, `cc-form_small-hint`, `cc-form_legal`, `cc-form_label` with `grid-column: 1 / -1` so they span the inner grid columns when nested.
+
+**Existing user-defined `cc-form_*` styles re-applied to the new form elements:**
+- `cc-form_label` on all 10 FormBlockLabels.
+- `cc-form_option` + `cc-form_option-radio` on the four phase radio wrappers.
+- `cc-form_option` + `cc-form_option-check` on the four services checkbox wrappers.
+- `cc-form_input` on the 5 text inputs + the FormSelect.
+- `cc-form_textarea` on the message FormTextarea.
+- `cc-form_upload` on the FormFileUploadWrapper.
+- `cc-form_submit` on the FormButton.
+
+**Portfolio restructure:**
+- Removed the `FormFileUploadInfo` element that lived inside `FormFileUploadDefault` (Webflow rendered it on the side of the Browse control by default).
+- Inserted a new `cc-form_small-hint` div as a sibling immediately after the FormFileUploadWrapper (id `3b8f4b72-…d40a`) carrying the text `Optional. PDF, images or a deck — up to 10 MB total.` (10 MB matches the actual Webflow paid-plan upload limit, not the 25 MB shown earlier in the Figma).
+
+**HtmlEmbed slot for any glue JS/CSS later:**
+- Inserted an empty `HtmlEmbed` as the last child of the FormForm (id `7cea9fae-…b268`, domId `contact-form-glue`, Navigator name "Contact form glue"). The page works without it; Abdellah pastes JS/CSS into it only if needed for things MCP can't do natively (e.g., Google Places integration).
+
+**Native autocomplete attributes** (Custom Attributes panel via Webflow MCP):
+- `autocomplete="name"` on `#full-name`
+- `autocomplete="organization"` on `#company`
+- `autocomplete="email"` on `#email`
+- `autocomplete="tel"` on `#phone`
+- `autocomplete="street-address"` on `#project-location`
+- Chrome / Safari now offer to autofill the saved profile values.
+
+**Project phase radios — rebuilt from zero:**
+- Original 4 radios were created in two passes (1 alone, then 3 in a batch). The 3 from the batch never grouped correctly with the first one after publishing, even though `groupName="project-phase"` was set on each input and read back successfully via `all_raw_settings`.
+- Iterative attempts at re-setting `groupName` and recreating radios 3 & 4 individually produced partial fixes only (the rebuilt subset grouped together, but mixed with the originals it stayed broken).
+- Final fix: deleted all 4 radio wrappers and recreated each one with a single `element_builder` call followed by its own `set_settings` + `set_text` + `set_style` calls, in order Early planning → Permit phase → Pre-sales preparation → Commercialisation started. With this clean one-at-a-time path the four radios behave as a real radio group (confirmed live by Abdellah after republish).
+- Current IDs and values:
+  - `phase-early` → `early-planning` (wrapper `fab844e9-…97a7`)
+  - `phase-permit` → `permit-phase` (wrapper `17c3a3f8-…d763`)
+  - `phase-presales` → `pre-sales-preparation` (wrapper `58362401-…10e8`)
+  - `phase-commercialisation` → `commercialisation-started` (wrapper `3c264a3c-…77f0`)
+
+### Webflow MCP gotchas confirmed during this phase
+
+- `placeholder` and `name` HTML attributes are both reserved — neither `add_or_update_attribute` nor `set_settings` with `attributes` will accept them. `autocomplete` is fine.
+- `FormSelect` does not accept `<option>` children via `whtml_builder` and exposes no `choices` / `options` setting. The 6 Residence type options must be added manually in the Designer (Element Settings → Choices).
+- Placeholders must also be set manually per input in the Designer (Element Settings → Placeholder).
+- Creating multiple `FormRadioInput` elements inside a single `element_builder` call corrupts the `groupName` binding on the rendered output even when `set_settings` reports success. Workaround: one radio per `element_builder` call.
+- `style_tool > update_style` and `element_snapshot_tool` time out frequently under load; retry or split the work.
+
+### Pending on Abdellah's side
+
+- Add the 6 Residence type options in Designer (`Single-family home`, `Multi-family residential`, `Apartment building / condominiums`, `Terraced / townhouses`, `Mixed-use development`, `Senior / assisted living`).
+- Set the 6 placeholders in Designer per input (Full name → `Your full name`, Company → `Optional`, Email → `anna@cloudonpoint.ch`, Phone → `+41 …`, Project location → `City, canton or region`, Message → `e.g. 18-unit lakeside development in Zug, permit expected Q3, looking to begin pre-sales communication early next year.`).
+- File upload: works at the structure level but submission fails on the current Starter plan. Field is intentionally kept in the form for when Abdellah upgrades to a Site Plan that supports uploads.
+- Project location → live address suggestions (Google Places–style) require an external service (Google Places, Mapbox, or Algolia Places) with an API key plus a JS snippet. There is no Webflow-native path for that. The `contact-form-glue` embed is already in place for hosting the snippet when Abdellah picks a provider.
+
+## 2026-05-28 — Contact page Phase 3a (section headers + helpers + legal in the native form)
+
+### Changed (via Webflow MCP, live on test-website---sabir, Contact page)
+
+Inserted the Figma phase headers and helper copy as sibling div blocks inside `FormForm` `2c73614e-…346d`, reusing the existing `cc-form_*` classes so the text picks up the styles that were already defined for the decorative form:
+
+- Before Row 1 (Full name) — section block: `01` / `About you` / `Takes ~3 minutes` / helper `Just so we know who we're writing back to. Fields marked * are required.` (wrapper id `621f351e-…b08a`).
+- Before Row 5 (Project location) — section block: `02` / `Your project` (wrapper id `cab44e05-…c9da`).
+- After Row 7 (project phase radios) — `cc-form_small-hint` `Pick the closest match — we'll calibrate from there.` (id `381fe026-…9295`).
+- After Services row — `cc-form_small-hint` `Select all that apply, or leave blank.` (id `6f85444a-…ecf1`).
+- Before Message row — section block: `03` / `Tell us more` (wrapper id `9851af58-…a8cd`).
+- After Message row — `cc-form_small-hint` `A few lines on the project — type, scale, timing, commercial objective.` (id `7b90f22a-…8114`).
+- Before Submit button — `cc-form_legal` `By sending this brief, you agree to be contacted by Cloudonpoint regarding your project. No marketing emails, no third parties.` (id `74e5a288-…88cd`).
+
+### Notes
+
+- Section blocks are wrapped in a fresh class `cc-form_step-block` (Webflow auto-created) — apply flex layout there if a 2-column row (num/title left, timing right) is wanted.
+- The Portfolio "Optional. PDF, images or a deck — up to 25 MB total." line was set directly on the FormFileUploadInfo during Phase 2, so no extra hint is needed below the upload control.
+
+## 2026-05-28 — Contact page Phase 2 (native Webflow form built)
+
+### Changed (via Webflow MCP, live on test-website---sabir, Contact page `6a09d8751e5baf5ab32394aa`)
+
+- Abdellah had created a second native `FormForm` ("Email Form 4", id `2c73614e-0adb-a64a-b8be-00a4499d346d`, style `Form`) inside a new section he called "Hero Heading Center", with 7 default text-input rows (`Div Block 8` for the first row, six `Div Block 9` for the others) plus two stray placeholder divs.
+- Removed the two stray divs left between the rows.
+- Configured rows 1–5 as real text inputs with Webflow `name` / `type` / `required` / `domId` settings:
+  - Row 1 → Full name * (text, required, domId `full-name`)
+  - Row 2 → Company (text, optional, domId `company`)
+  - Row 3 → Email * (email, required, domId `email`)
+  - Row 4 → Phone (tel, optional, domId `phone`)
+  - Row 5 → Project location * (text, required, domId `project-location`)
+- Replaced the row-6 text input with a real `FormSelect` (id `8b0f5c2c-0cb5-3683-ed94-5f038b7a65cd`, name `Residence type`, domId `residence-type`).
+- Replaced the row-7 text input with a `FormRadioWrapper` group of four radios sharing the group name `project-phase`: `early-planning`, `permit-phase`, `pre-sales-preparation`, `commercialisation-started`.
+- Appended a new Services row containing one `FormBlockLabel` (`Services needed`) and four independent `FormCheckboxInput`: `Services - Architectural visualisation`, `Services - Project website`, `Services - Digital communication`, `Services - Not sure yet`.
+- Appended a Message row with `FormBlockLabel` (`Message *`) and a `FormTextarea` (name `Message`, required, domId `message`).
+- Appended a Portfolio row with `FormBlockLabel` (`Portfolio & references`) and a `FormFileUploadWrapper` (the underlying `FormFileUploadInput` carries name `Portfolio`, domId `portfolio-file`). The upload's visible text was set to `Attach portfolio or project documents` and the info line to `Optional. PDF, images or a deck — up to 25 MB total.`
+- Appended a `FormButton` with `buttonText` `Send brief →`, `loadingText` `Sending…`, domId `send-brief`.
+
+### Webflow MCP limitations encountered (recorded for future agents)
+
+- `placeholder` is a reserved attribute name in the Designer MCP — neither `add_or_update_attribute` nor `set_settings` with `attributes` will accept it, and `placeholder` is not in the FormTextInput / FormSelect / FormTextarea settings list. Workaround: set placeholders at runtime through an HTML Embed (see snippet below).
+- `FormSelect` does not accept child `<option>` elements via `whtml_builder` (`doesn't support append creation position`), nor a `choices` / `options` setting. Workaround: populate options at runtime via JS embed (see below).
+
+### Pending after Phase 2
+
+- Section headers (`01 About you`, `02 Your project`, `03 Tell us more`) and per-section helper texts (`Just so we know who we're writing back to…`, `Pick the closest match…`, `Select all that apply…`, `A few lines on the project…`, legal disclaimer) are not yet rendered inside the new `FormForm`. They live only in the older decorative `cc-form_*` section. Either add them as text divs between rows of the new form, or keep the decorative wrapper and slot the new inputs inside it.
+- The leftover default `FormForm` "Email Form 3" (`7ee09f21-…6def`, Name + Email + Submit) is still on the page — to delete once the new form is validated.
+- The old decorative `cc-form_*` section is still on the page — to hide or delete once the new form is validated.
+- Visual layout of the new form does not yet match the Figma grid (2-column for About you / 2×2 for phase & services) — needs CSS on `Div Block 9` plus a row wrapper for the 2-column pairs.
+
+### Required embed (Abdellah pastes manually)
+
+Place a Webflow `Embed` element anywhere on the Contact page (e.g. at the end of the form section) and paste:
+
+```html
+<script>
+(function(){
+  var ph = {
+    'full-name': 'Your full name',
+    'company': 'Optional',
+    'email': 'anna@cloudonpoint.ch',
+    'phone': '+41 …',
+    'project-location': 'City, canton or region',
+    'message': 'e.g. 18-unit lakeside development in Zug, permit expected Q3, looking to begin pre-sales communication early next year.'
+  };
+  Object.keys(ph).forEach(function(id){
+    var el = document.getElementById(id);
+    if (el && !el.placeholder) el.setAttribute('placeholder', ph[id]);
+  });
+
+  var sel = document.getElementById('residence-type');
+  if (sel && sel.options.length === 0) {
+    var opts = [
+      { v: '', t: 'Select an option', placeholder: true },
+      { v: 'Single-family home',                  t: 'Single-family home' },
+      { v: 'Multi-family residential',            t: 'Multi-family residential' },
+      { v: 'Apartment building / condominiums',   t: 'Apartment building / condominiums' },
+      { v: 'Terraced / townhouses',               t: 'Terraced / townhouses' },
+      { v: 'Mixed-use development',               t: 'Mixed-use development' },
+      { v: 'Senior / assisted living',            t: 'Senior / assisted living' }
+    ];
+    opts.forEach(function(o){
+      var op = document.createElement('option');
+      op.value = o.v;
+      op.textContent = o.t;
+      if (o.placeholder) { op.disabled = true; op.selected = true; }
+      sel.appendChild(op);
+    });
+  }
+})();
+</script>
+```
+
+The script is idempotent (won't overwrite a placeholder already set in Designer, won't duplicate select options).
+
+## 2026-05-28 — Contact page Phase 1 (text + sidebar restructure)
+
+### Changed (via Webflow MCP, live on test-website---sabir)
+
+- Replaced every placeholder text node on the Contact page (`6a09d8751e5baf5ab32394aa`) with the exact content from the Figma design (file `K9dYMDIHuuyRJAFFUXPtL2`, node `74:1662`).
+- Intro eyebrow row: `—` / `Contact — Cloudonpoint` / `Making it clear, credible & sellable.` (H1 + description were already correct from a previous pass).
+- Form visual section (still decorative divs, not real inputs yet): section 01 `About you` + `Takes ~3 minutes` + helper text + four labels (Full name *, Company, Email *, Phone); section 02 `Your project` + Project location *, Residence type, Project phase * + 4 phase options + hint, Services needed + 4 service options + hint; section 03 `Tell us more` + Message * + hint, Portfolio upload control text + Browse + hint, legal line. Submit `Send brief →` was already correct.
+- Bottom stats: four blocks filled — `01 Working hours / Mon — Fri / 09:00 — 18:00 CET`, `02 Languages / English / Deutsch · Français`, `03 Typical engagement / 12 — 24 month / Commercialisation cycle`, `04 Not the right fit / Single-asset listings / One-off renderings`.
+- Sidebar restructured from 3 blocks → 4 blocks to match the Figma:
+  - Moved the email link out of block 1 into block 2 (`element_tool > move_element`).
+  - Appended two `cc-sidebar_detail` rows to block 1 (`Zug — Switzerland`, `Working across CH · DE · AT`) via `whtml_builder`.
+  - Inserted a brand new block 4 (`cc-sidebar_block` with `cc-sidebar_num-row` + `cc-sidebar_detail` paragraph) as a sibling after block 3 via `whtml_builder`.
+  - Filled the sidebar text: `01 Studio / Cloudonpoint / Zug — Switzerland / Working across CH · DE · AT`, `02 Direct / hello@cloudonpoint.ch / +41 41 000 00 00`, `03 Reassurance / paragraph`, `04 Response / paragraph`.
+
+### Verified
+
+- All `set_text` calls returned `success` with the new `textContent` echoed back.
+- WHTML inserts returned the new element IDs and confirmed the `cc-sidebar_*` style classes were applied.
+
+### Notes
+
+- Inner text was set on the `String` child node, NOT on the parent block. Pattern confirmed: the String child id is the parent block id with the last hex character incremented by one (e.g., parent `…bfbc` → child `…bfbd`).
+- The MCP server timed out repeatedly on heavy batches (>5 operations) and on `get_all_elements`. Workarounds used: batches of 4–5 `set_text` per call; one `whtml_builder` action per call.
+- The Contact page still needs the functional form rebuild — see CURRENT_TASK for the scope.
+- Abdellah needs to re-publish the site for the changes to appear on the live URL.
+
 ## 2026-05-27 — Repository memory setup
 
 ### Changed

@@ -1,5 +1,81 @@
 # Current Task
 
+## Task: Contact page — bring to parity with Figma design
+
+### Source of truth
+
+Figma file `K9dYMDIHuuyRJAFFUXPtL2`, node `74:1662` (`Main Content` of Contact).
+Webflow page id `6a09d8751e5baf5ab32394aa` on site `6a08929c8a27708945c53a0d`.
+
+### Phase 1 — DONE 2026-05-28
+
+- All placeholder div text on the page now matches the Figma exactly (intro, form labels/options/hints, stats, sidebar).
+- Sidebar restructured from 3 to 4 blocks (Studio / Direct / Reassurance / Response) — see CHANGELOG.
+
+### Phase 2 — DONE 2026-05-28: functional native form built
+
+Abdellah created a second `FormForm` ("Email Form 4", id `2c73614e-…346d`) inside a new "Hero Heading Center" section. Worked on that wrapper. Every Figma field is now a real Webflow form element with proper `name` / `type` / `required` / `domId`. See CHANGELOG `2026-05-28 — Contact page Phase 2` for the full mapping and the JS embed snippet to paste for placeholders + residence-type select options.
+
+### Phase 4 — DONE 2026-05-29: native form styling embed rewritten to match the cc-form reference
+
+Goal: make the native `#email-form-4` (in "Hero Heading Center") look exactly like the decorative `cc-form-section` reference — fields, option boxes, radios, checkboxes, select, textarea and file upload — while keeping the "up to 10 MB" portfolio hint.
+
+- Verified (read-only) both sections via MCP snapshots + published HTML/CSS + headless-Chrome computed-style measurements. Confirmed the current embed only styled layout, so Webflow's `.w-*` defaults left the option boxes collapsed (~36px), the grid single-column, inputs at 38px, and the file upload as a default grey button.
+- Rewrote the embed (scoped to `#email-form-4`). Ready-to-paste block saved at repo root `contact-form-embed.html`.
+- Local side-by-side render (real published CSS) confirms the native form now matches the reference; before→after measurements recorded in CHANGELOG.
+- ACTION FOR ABDELLAH: paste `contact-form-embed.html` into the existing embed in the "Hero Heading Center" section, then re-publish. (The Webflow MCP cannot write embed content.)
+
+### Phase 3 — DONE 2026-05-28: form is functionally native
+
+Every Figma field is now a real Webflow form element with proper settings, the layout matches the Figma (full-width section headers, 2×2 phase + services grids, message + portfolio full width), and the Phase radios behave as a single radio group (confirmed live by Abdellah after the from-scratch rebuild). Native autocomplete attributes are posted on the text inputs. Submissions are captured by Webflow's own form pipeline.
+
+### Pending follow-ups
+
+- Manual in Designer: Residence type select Choices (the 6 residence types) and per-input Placeholders. `placeholder` and select `options` cannot be written through the Webflow MCP.
+- File upload: structure is in place but submission fails on the current Starter plan. Field is kept on the page for when the site is moved to a paid Site Plan.
+- Project location → live address suggestions: needs a Google Places / Mapbox / Algolia Places API key and a JS snippet pasted into the existing `contact-form-glue` Embed. No Webflow-native equivalent.
+- Once everything is validated visually, delete the old default `Email Form 3` (`7ee09f21-…6def`) and the decorative `cc-form_*` section (`f3f73249-…df731`) — they're still on the page as legacy from the original template.
+
+### Phase 3 — Pending: visual polish + cleanup (kept for history)
+
+- Add section headers (`01 About you`, `02 Your project`, `03 Tell us more`) and helper texts to the new form (currently they only exist in the older decorative cc-form_* section).
+- Apply the Figma grid layout via CSS on `Div Block 9` (2-column for About you, 2×2 for phase + services).
+- Once visually validated, delete the old default `Email Form 3` (`7ee09f21-…6def`) and the decorative `cc-form_*` section.
+- Re-publish so the live URL serves the new form and Webflow's submission inbox starts catching `Email Form 4`.
+
+### Phase 2 — Pending: functional form rebuild (kept for history)
+
+Abdellah decided (2026-05-28) to rebuild the form as a native Webflow form (not an external embed). The current visual fields are pure decorative divs — the only real form on the page is a leftover default `FormForm` (`7ee09f21-7f0d-ad73-52cb-2a7f6bfa6def`, "Email Form 3") with just Name + Email + Submit.
+
+The structural work needed (each item is a Webflow MCP operation, all on Contact page):
+
+1. Wrap the visual form container (parent of the cc-form_step-* divs) in a real `FormForm`, or extend the existing `Email Form 3` form to contain the visual structure. Native submissions then arrive in Project Settings → Forms.
+2. For each "About you" field (Full name *, Company, Email *, Phone) replace the inline placeholder div with a real `FormTextInput`, set `inputName`, `inputType` (text / email / tel), `isRequired` where the label has `*`, and `placeholder` from the Figma:
+   - Full name *   → placeholder `Your full name`, required
+   - Company       → placeholder `Optional`
+   - Email *       → type email, placeholder `anna@cloudonpoint.ch`, required
+   - Phone         → type tel, placeholder `+41 …`
+3. Section 02:
+   - `Project location *` → `FormTextInput`, placeholder `City, canton or region`, required.
+   - `Residence type` → `FormSelect` with placeholder `Select an option` and six options:
+     `Single-family home`, `Multi-family residential`, `Apartment building / condominiums`, `Terraced / townhouses`, `Mixed-use development`, `Senior / assisted living`.
+   - `Project phase *` → group of four `FormRadioInput` (single-select), name `project-phase`, values `early-planning`, `permit-phase`, `pre-sales-preparation`, `commercialisation-started`.
+   - `Services needed` → group of four `FormCheckboxInput`, names `services-archviz`, `services-website`, `services-comms`, `services-unknown`.
+4. Section 03:
+   - `Message *` → `FormTextarea`, placeholder `e.g. 18-unit lakeside development in Zug, permit expected Q3, looking to begin pre-sales communication early next year.`, required.
+   - `Portfolio & references` → `FormFileUploadWrapper` (Webflow's file upload requires a paid plan — confirm with Abdellah before relying on it).
+5. Submit: convert the `cc-form_submit` link (`10ad7e40`) into a real `FormButton`, label `Send brief →`.
+6. Remove the leftover default Name/Email/Submit nodes so they are not duplicated.
+
+### Known MCP gotchas (recorded during Phase 1)
+
+- `get_all_elements` and large `query_elements` batches reliably time out on this page. Use targeted queries with `element_id` or single-style filters.
+- `set_text` must target the inner `String` node, not the parent block. The String id is the parent id with the last hex character +1.
+- `whtml_builder` accepts only a single root element per action — chain multiple actions for multi-block inserts.
+- The Webflow Data API cannot edit primary-locale text; primary edits must go through the Designer MCP.
+
+### Previous task (kept for reference)
+
 ## Task: Full audit of scripts, embeds and custom code on test-website---sabir
 
 ### Request
