@@ -5,6 +5,16 @@ This repository is the shared memory for the COP Webflow website.
 The live website source of truth is Webflow, not GitHub.
 GitHub is used to synchronize context between Claude, Cursor, and different computers.
 
+## Repository source of truth
+
+`COP-website` is the only GitHub repository to use for this project.
+
+The branch `cursor/setup-dev-environment-ee62` is the single source of truth for project memory and documentation.
+
+Do not create new repositories, new branches, or pull requests without asking Abdellah first and receiving explicit approval.
+
+The repository `sabir-art/Skills-Claude` was created by mistake. Its useful content has been checked against `sabir-art/COP-website` and preserved here. Do not delete `Skills-Claude` until Abdellah confirms that everything useful has been safely migrated.
+
 ## Core rules
 
 1. Never treat previous AI notes as absolute truth unless they are inside `VALIDATED_CONTEXT.md`.
@@ -17,6 +27,7 @@ GitHub is used to synchronize context between Claude, Cursor, and different comp
 8. Do not delete scripts, styles, classes, or components unless their usage has been verified.
 9. If removing anything, keep a backup or document exactly what was removed and why.
 10. Never commit API tokens, Webflow credentials, `.env` secrets, or private access keys.
+11. Do not modify the live Webflow website as part of repository consolidation work.
 
 ## Start-of-session checklist
 
