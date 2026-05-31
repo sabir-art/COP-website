@@ -1,31 +1,46 @@
 # Failed Attempts
 
-Use this file to document approaches that did not work, so Claude, Cursor, or another AI agent does not repeat them.
+Use this file only for verified, reproducible, current limitations.
 
-Important: a failed attempt is not a validated project truth. It is a warning about an approach that caused problems or did not solve the issue.
+A failed attempt is not a permanent truth.
 
-## Format
+Before using this file to avoid an approach, re-check the current context:
+
+- current Webflow structure
+- current branch
+- current browser behavior
+- current API/tool capability
+- current user requirement
+
+## Current verified limitations
+
+No current reproducible failed implementation attempts are documented.
+
+## How to add a future entry
+
+Use this format only after the issue has been verified:
 
 ```md
 ## YYYY-MM-DD — Short title
 
-### Attempted approach
+### Context
 
-- [What was tried]
+- Where it was tested.
+- Which branch/page/tool was used.
 
-### Problem
+### What was attempted
 
-- [Why it failed]
+- The exact approach.
 
-### Do not repeat
+### What happened
 
-- [What should be avoided]
+- The observed result.
 
-### Safer next direction
+### Current conclusion
 
-- [What should be checked or tried instead]
+- Whether this is a hard limitation, a temporary issue, or something to re-test later.
+
+### Re-test condition
+
+- When future agents should try again.
 ```
-
-## Known failed attempts
-
-No failed implementation attempts documented yet.
