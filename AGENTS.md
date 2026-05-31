@@ -1,104 +1,85 @@
 # AI Agent Instructions
 
-This repository is the shared memory for the COP Webflow website.
+This repository is shared working memory for the COP / CloudOnPoint Webflow website.
+
+## Repository rules
+
+- Use only `sabir-art/COP-website`.
+- Use only branch `cursor/setup-dev-environment-ee62` unless Abdellah explicitly approves another branch.
+- Do not create new repositories, branches, or pull requests without asking Abdellah first.
+- Do not use `sabir-art/Skills-Claude` for new work. It was created by mistake.
+- Do not delete `Skills-Claude` unless Abdellah explicitly confirms it can be deleted.
+
+## Source of truth
 
 The live website source of truth is Webflow, not GitHub.
-GitHub is used to synchronize context between Claude, Cursor, and different computers.
 
-## Repository source of truth
+GitHub stores working memory only. Old notes can be useful, but they are not automatically true.
 
-`COP-website` is the only GitHub repository to use for this project.
+## Memory hierarchy
 
-The branch `cursor/setup-dev-environment-ee62` is the single source of truth for project memory and documentation.
+Read files in this order:
 
-Do not create new repositories, new branches, or pull requests without asking Abdellah first and receiving explicit approval.
+1. `README.md`
+2. `AGENTS.md`
+3. `VALIDATED_CONTEXT.md`
+4. `CURRENT_TASK.md`
+5. `QUESTIONS.md`
+6. `FAILED_ATTEMPTS.md`
+7. `CHANGELOG.md`
 
-The repository `sabir-art/Skills-Claude` was created by mistake. Its useful content has been checked against `sabir-art/COP-website` and preserved here. Do not delete `Skills-Claude` until Abdellah confirms that everything useful has been safely migrated.
+Interpret them like this:
 
-## Core rules
+- `VALIDATED_CONTEXT.md` = confirmed facts only.
+- `CURRENT_TASK.md` = what is active now, not the full project history.
+- `QUESTIONS.md` = unresolved items that need Abdellah or live verification.
+- `FAILED_ATTEMPTS.md` = warnings, not permanent bans.
+- `CHANGELOG.md` = historical record, not instructions.
 
-1. Never treat previous AI notes as absolute truth unless they are inside `VALIDATED_CONTEXT.md`.
-2. Before modifying Webflow, always verify the current live structure using the Webflow MCP.
-3. If something is uncertain, write it in `QUESTIONS.md` instead of assuming.
-4. If a solution fails, document it in `FAILED_ATTEMPTS.md`.
-5. Do not overwrite validated decisions without asking Abdellah.
-6. Keep changes minimal and focused on the requested task.
-7. Do not invent Webflow class names, component names, page structures, scripts, or variables.
-8. Do not delete scripts, styles, classes, or components unless their usage has been verified.
-9. If removing anything, keep a backup or document exactly what was removed and why.
-10. Never commit API tokens, Webflow credentials, `.env` secrets, or private access keys.
-11. Do not modify the live Webflow website as part of repository consolidation work.
+## Anti-bias rule
 
-## Start-of-session checklist
+Do not let old failed attempts overrule the current situation.
 
-Before doing any task, read:
+If a note says something failed, do not assume it still fails. First check:
 
-- `README.md`
-- `AGENTS.md`
-- `VALIDATED_CONTEXT.md`
-- `CURRENT_TASK.md`
-- `FAILED_ATTEMPTS.md`
-- `QUESTIONS.md`
+- Was it a temporary bug?
+- Was it caused by the wrong branch, wrong selector, wrong page, wrong plan, or wrong Webflow state?
+- Has the Webflow structure changed since then?
+- Has the API, browser, or user requirement changed?
 
-Only `VALIDATED_CONTEXT.md` should be treated as confirmed truth.
-Everything else must be verified when relevant.
+Only treat something as a hard limitation if it is reproducible, current, and clearly documented as such.
 
-## End-of-session checklist
+## Webflow rules
 
-At the end of a work session, update the relevant files:
+Before modifying Webflow:
 
-- `CURRENT_TASK.md` with what is currently in progress.
-- `CHANGELOG.md` with what changed.
-- `FAILED_ATTEMPTS.md` if an approach did not work.
-- `QUESTIONS.md` if something still needs confirmation.
-
-Do not update `VALIDATED_CONTEXT.md` unless Abdellah explicitly validates the information.
-
-## Webflow MCP workflow
-
-When working on Webflow:
-
-1. Inspect the live Webflow structure through MCP first.
-2. Identify whether an element is global, component-based, page-level, or custom-code based.
+1. Inspect the current live/page/component structure through the Webflow MCP or current available source.
+2. Identify whether the target is global, component-based, page-level, or custom-code based.
 3. Make the smallest possible change.
-4. Test the change on the relevant pages.
-5. Document the result.
+4. Do not delete scripts, styles, classes, components, or embeds unless their usage has been verified.
+5. If something is uncertain, ask Abdellah or write it in `QUESTIONS.md`.
 
-### HtmlEmbed editing workflow (mandatory)
+## HtmlEmbed workflow
 
-Before proposing any change to a Webflow Embed element, the agent MUST:
+The current known workflow is:
 
-1. Read the current embed content via the Webflow Data API (`get_component_content` or `get_page_content`) and show it to Abdellah, or summarize it precisely with line references.
-2. Explain what will change and why.
-3. Provide the full new embed content as a single, ready-to-paste block.
-4. Tell Abdellah to paste it into the embed in the Webflow Designer, then re-publish.
+1. Read the existing embed content first when possible.
+2. Explain what should change and why.
+3. Provide the full replacement code as a ready-to-paste block.
+4. Abdellah manually pastes it into Webflow Designer and republishes.
 
-The agent MUST NOT skip step 1. The agent MUST NOT ask Abdellah to paste new code without first confirming what is currently there.
+Do not assume an embed can or cannot be edited only from old notes. Re-check the current tool/API capability when the task depends on it.
 
-Reason: the MCP cannot write the HTML/CSS/JS content of an existing embed (confirmed 2026-05-28). The only settable keys on an `HtmlEmbed` element are `domId` and `visibility`. The paste step is therefore always a human action.
+## File update rules
 
-## Cursor Cloud specific instructions
-
-This repository is used mainly as project memory for a Webflow website.
-There may be no application code, no package manager configuration, no tests, and no services defined unless Abdellah adds them later.
-
-### Current technical state
-
-- The live website is in Webflow.
-- GitHub stores Markdown memory and documentation.
-- Do not assume there is a local app to build unless project files are added later.
-
-### For future agents
-
-Once application code is added, update this file with:
-
-- How to install dependencies.
-- How to run the dev server.
-- How to run lint and tests.
-- Any non-obvious environment requirements or gotchas.
+- Keep `CURRENT_TASK.md` short and current.
+- Keep `VALIDATED_CONTEXT.md` factual and stable.
+- Keep `FAILED_ATTEMPTS.md` short and only for verified reproducible limitations.
+- Do not store long exploratory reasoning in memory files.
+- Do not add speculative conclusions as facts.
+- Never commit API tokens, credentials, `.env` secrets, or private keys.
 
 ## Communication style
 
-Be direct and practical.
-Explain what was checked, what changed, and what remains uncertain.
-Avoid long assumptions.
+Be direct, practical, and precise.
+Say what was checked, what changed, and what remains uncertain.
