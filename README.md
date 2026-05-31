@@ -1,33 +1,33 @@
 # COP Website
 
-This repository is used as a shared project memory for the COP Webflow website.
+Shared project memory for the COP / CloudOnPoint Webflow website.
 
-The live website source of truth is Webflow.
-GitHub is used to keep documentation, validated context, current tasks, changelog, failed attempts, and open questions synchronized between Claude, Cursor, and different computers.
+## Source of truth
 
-## Repository source of truth
+- Repository to use: `sabir-art/COP-website`
+- Branch to use: `cursor/setup-dev-environment-ee62`
+- Do not use `sabir-art/Skills-Claude` for new work. It was created by mistake.
+- Do not create new repositories, branches, or pull requests without asking Abdellah first.
 
-`COP-website` is the only GitHub repository to use for this project.
+## Important rule
 
-The branch `cursor/setup-dev-environment-ee62` is the single source of truth for the project memory and documentation.
+The live website source of truth is Webflow, not GitHub.
 
-Do not create new branches or pull requests without asking Abdellah first and receiving explicit approval.
+GitHub is only used to keep a clean working memory between Claude, Cursor, and different computers.
 
-The repository `sabir-art/Skills-Claude` was created by mistake. Its useful content has been checked against this repository and merged/preserved here. Do not delete `Skills-Claude` until Abdellah confirms that everything useful has been safely migrated.
+Before changing anything in Webflow, inspect the live structure first. Do not rely only on old notes.
 
-## Important principle
+## Memory hierarchy
 
-Do not treat every note in this repository as confirmed truth.
-Only `VALIDATED_CONTEXT.md` contains information explicitly validated by Abdellah.
+1. `VALIDATED_CONTEXT.md` — confirmed facts only.
+2. `CURRENT_TASK.md` — current active work only.
+3. `QUESTIONS.md` — unresolved questions only.
+4. `CHANGELOG.md` — short record of important repo/documentation changes.
+5. `FAILED_ATTEMPTS.md` — only verified, reproducible limitations. Never use this file to block a new attempt without re-checking the current context.
+6. `AGENTS.md` — operating rules for Claude, Cursor, and other AI agents.
 
-Before changing the live Webflow project, Claude or Cursor must verify the current structure through the Webflow MCP.
+## Rule for future agents
 
-## Main files
+Old notes are not automatically true.
 
-- `AGENTS.md` — permanent rules for Claude, Cursor, and AI agents.
-- `VALIDATED_CONTEXT.md` — confirmed project facts only.
-- `CURRENT_TASK.md` — current active task and working context.
-- `CHANGELOG.md` — log of changes made or validated.
-- `FAILED_ATTEMPTS.md` — things that were tried and should not be repeated.
-- `QUESTIONS.md` — uncertainties that need confirmation.
-- `REPOSITORY_CONSOLIDATION.md` — record of the safe merge from `sabir-art/Skills-Claude` into `sabir-art/COP-website`.
+If something says “it did not work”, treat it as historical context, not as a permanent rule. Re-check the current Webflow state, browser state, API capability, or user requirement before deciding.
